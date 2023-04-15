@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="software2.software2.controller.LoginController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="400.0" prefWidth="400.0">
+         <children>
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="150.0" prefWidth="300.0">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label fx:id="usernameLabel" text="Username" />
+                        <TextField fx:id="userNameField" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label fx:id="passwordLabel" text="Password" />
+                        <TextField fx:id="passwordField" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            <Button fx:id="submitBtn" mnemonicParsing="false" onAction="#onActionLogin" text="Submit" />
+            <Label fx:id="timeZoneLabel" alignment="BOTTOM_LEFT" contentDisplay="BOTTOM" text="TimeZone Label" translateY="75.0" />
+         </children></VBox>
+   </children>
+</AnchorPane>
