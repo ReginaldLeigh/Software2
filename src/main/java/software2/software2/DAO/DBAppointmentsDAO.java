@@ -1,12 +1,7 @@
 package software2.software2.DAO;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableColumn;
-import javafx.util.Callback;
-import software2.software2.controller.MainMenu1Controller;
 import software2.software2.database.JDBC;
 import software2.software2.model.Appointment;
 
@@ -14,8 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 public class DBAppointmentsDAO {
     public static ObservableList<Appointment> getAllAppointments() {
@@ -73,8 +66,8 @@ public class DBAppointmentsDAO {
                 appointment.getDescription() + "', '" +
                 appointment.getLocation() + "', '" +
                 appointment.getType() + "', '" +
-                appointment.getStart().toString() + "', '" +
-                appointment.getEnd().toString() + "', " +
+                appointment.getStart() + "', '" +
+                appointment.getEnd() + "', " +
                 appointment.getCustomerId() + ", " +
                 appointment.getUserId() + ", " +
                 appointment.getContactId() + ")"
@@ -154,16 +147,6 @@ public class DBAppointmentsDAO {
             //make the query ==> resultSet
             ResultSet rs = ps.executeQuery();
 
-            for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-                //We are using non property style for making dynamic table
-                final int j = i;
-                TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i + 1));
-                col.setCellValueFactory((Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>) param -> new SimpleStringProperty(param.getValue().get(j).toString()));
-
-                MainMenu1Controller.appointmentsTable.getColumns().addAll(col);
-                System.out.println("Column [" + i + "] ");
-            }
-
             //cycle through the resultSet
             while(rs.next()) {
                 //pull out the data
@@ -192,5 +175,18 @@ public class DBAppointmentsDAO {
         }
         //return the list
         return appointments;
+    }
+
+    public static ResultSet getResultSet() throws SQLException {
+        //create a list to return
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+        //set up the sql
+        String sql = "SELECT * FROM client_schedule.appointments";
+
+        //make the prepared statement
+        PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+        //make the query ==> resultSet
+        return ps.executeQuery();
     }
 }

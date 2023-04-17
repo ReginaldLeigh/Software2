@@ -10,23 +10,27 @@
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1350.0" spacing="20.0">
                <children>
+                  <RadioButton mnemonicParsing="false" text="Customer View">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="toggleView" />
+                     </toggleGroup></RadioButton>
+                  <RadioButton mnemonicParsing="false" selected="true" text="Appointment View" toggleGroup="$toggleView">
+                     <HBox.margin>
+                        <Insets right="90.0" />
+                     </HBox.margin>
+                  </RadioButton>
                   <Button fx:id="AddBtn" mnemonicParsing="false" onAction="#onActionAdd" text="Add Appointment" />
                   <Button fx:id="UpdateBtn" mnemonicParsing="false" onAction="#onActionUpdate" text="Update Appointment" />
                   <Button fx:id="DeleteBtn" mnemonicParsing="false" onAction="#onActionDelete" text="Delete Appointment" />
+                  <TextField>
+                     <HBox.margin>
+                        <Insets left="120.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button mnemonicParsing="false" text="Button" />
                </children>
             </HBox>
-            <TableView fx:id="appointmentsTable" maxWidth="-Infinity" prefHeight="400.0" prefWidth="1350.0">
-              <columns>
-                <TableColumn fx:id="appointmentIDCol" prefWidth="75.0" text="Appointment ID" />
-                <TableColumn fx:id="titleCol" prefWidth="75.0" text="Title" />
-                  <TableColumn fx:id="descCol" prefWidth="75.0" text="Description" />
-                  <TableColumn fx:id="locationCol" prefWidth="75.0" text="Location" />
-                  <TableColumn fx:id="typeCol" prefWidth="75.0" text="Type" />
-                  <TableColumn fx:id="startTimeCol" prefWidth="75.0" text="Start Time" />
-                  <TableColumn fx:id="endTimeCol" prefWidth="75.0" text="End Time" />
-                  <TableColumn fx:id="custIDCol" prefWidth="75.0" text="Customer ID" />
-                  <TableColumn fx:id="userIDCol" prefWidth="75.0" text="User ID" />
-              </columns>
+            <TableView fx:id="mainTable" maxWidth="-Infinity" prefHeight="400.0" prefWidth="1350.0">
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>

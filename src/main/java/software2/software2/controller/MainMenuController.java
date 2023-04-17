@@ -1,5 +1,7 @@
 package software2.software2.controller;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,29 +21,13 @@ import software2.software2.model.Customer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class MainMenuController implements Initializable {
     @FXML
-    private TableView<Appointment> appointmentsTable;
-    @FXML
-    private TableColumn<Appointment, Integer> appointmentIDCol;
-    @FXML
-    private TableColumn<Appointment, String> titleCol;
-    @FXML
-    private TableColumn<Appointment, String> descCol;
-    @FXML
-    private TableColumn<Appointment, String> locationCol;
-    @FXML
-    private TableColumn<Appointment, String> typeCol;
-    @FXML
-    private TableColumn<Appointment, String> startTimeCol;
-    @FXML
-    private TableColumn<Appointment, String> endTimeCol;
-    @FXML
-    private TableColumn<Appointment, Integer> custIDCol;
-    @FXML
-    private TableColumn<Appointment, Integer> userIDCol;
+    private TableView mainTable;
 
     Parent scene;
     Stage stage;
@@ -54,37 +40,8 @@ public class MainMenuController implements Initializable {
         stage.show();
     }
 
-//    @FXML
-//    private void setAppointmentsTable(ObservableList<Appointment> appointments) {
-//        appointmentsTable.setItems(appointments);
-//        appointmentIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-//        titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-//        descCol.setCellValueFactory(new PropertyValueFactory<>("description"));
-//        locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
-//        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
-//        startTimeCol.setCellValueFactory(new PropertyValueFactory<>("start"));
-//        endTimeCol.setCellValueFactory(new PropertyValueFactory<>("end"));
-//        custIDCol.setCellValueFactory(new PropertyValueFactory<>("customerId"));
-//        userIDCol.setCellValueFactory(new PropertyValueFactory<>("userId"));
-//    }
-
-    @FXML
-    private void setAppointmentsTable(ObservableList<Appointment> appointments) {
-        appointmentsTable.setItems(appointments);
-        appointmentIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-        titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        descCol.setCellValueFactory(new PropertyValueFactory<>("description"));
-        locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
-        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
-        startTimeCol.setCellValueFactory(new PropertyValueFactory<>("start"));
-        endTimeCol.setCellValueFactory(new PropertyValueFactory<>("end"));
-        custIDCol.setCellValueFactory(new PropertyValueFactory<>("customerId"));
-        userIDCol.setCellValueFactory(new PropertyValueFactory<>("userId"));
-    }
-
     @FXML
     private void onActionAdd(ActionEvent event) throws IOException {
-//        DBAppointmentsDAO.addAppointment(new Appointment(4, "test1", "new test", "georgia", "test", "0110-01-01", "0110-01-01", 3, 1, 3));
         switchScene(event, "/software2/software2/view/addCustomer.fxml");
     }
 
@@ -120,9 +77,56 @@ public class MainMenuController implements Initializable {
         switchScene(event, "/software2/software2/view/login.fxml");
     }
 
+    // Dynamically adds data to mainmenu tableView based on database results
+    public void setMainTable(ResultSet rs) {
+        //create a list to return
+        ObservableList<ObservableList> customers = FXCollections.observableArrayList();
+
+        try {
+            //loops over each column in resultSet
+            for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+                final int j = i;
+                TableColumn<ObservableList, String> col = new TableColumn<ObservableList, String> (rs.getMetaData().getColumnName(i + 1));
+
+
+                col.setCellValueFactory(param -> {
+                    String value;
+
+                    if (param.getValue().get(j) == null) {
+                        value = "";
+                    } else {
+                        value = param.getValue().get(j).toString();
+                    }
+
+                    return new SimpleStringProperty(value);
+                });
+
+                mainTable.getColumns().addAll(col);
+            }
+
+            while (rs.next()) {
+                // creates list of values based on database record values
+                ObservableList<String> row = FXCollections.observableArrayList();
+                for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                    row.add(rs.getString(i));
+                }
+                customers.add(row);
+            }
+
+            mainTable.setItems(customers);
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setAppointmentsTable(DBAppointmentsDAO.getAllAppointments());
+        try {
+            setMainTable(DBAppointmentsDAO.getResultSet());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         DBCustomersDAO.setNewCustomerID();
         System.out.println();
     }
