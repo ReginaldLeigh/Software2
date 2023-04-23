@@ -10,24 +10,14 @@
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1350.0" spacing="20.0">
                <children>
-                  <RadioButton mnemonicParsing="false" text="Customer View">
+                  <RadioButton fx:id="customerBtn" mnemonicParsing="false" onAction="#onCustomerSelect" text="Customer View">
                      <toggleGroup>
                         <ToggleGroup fx:id="toggleView" />
                      </toggleGroup></RadioButton>
-                  <RadioButton mnemonicParsing="false" selected="true" text="Appointment View" toggleGroup="$toggleView">
-                     <HBox.margin>
-                        <Insets right="90.0" />
-                     </HBox.margin>
-                  </RadioButton>
+                  <RadioButton fx:id="appointmentBtn" mnemonicParsing="false" onAction="#onApptSelect" selected="true" text="Appointment View" toggleGroup="$toggleView" />
                   <Button fx:id="AddBtn" mnemonicParsing="false" onAction="#onActionAdd" text="Add Appointment" />
                   <Button fx:id="UpdateBtn" mnemonicParsing="false" onAction="#onActionUpdate" text="Update Appointment" />
                   <Button fx:id="DeleteBtn" mnemonicParsing="false" onAction="#onActionDelete" text="Delete Appointment" />
-                  <TextField>
-                     <HBox.margin>
-                        <Insets left="120.0" />
-                     </HBox.margin>
-                  </TextField>
-                  <Button mnemonicParsing="false" text="Button" />
                </children>
             </HBox>
             <TableView fx:id="mainTable" maxWidth="-Infinity" prefHeight="400.0" prefWidth="1350.0">

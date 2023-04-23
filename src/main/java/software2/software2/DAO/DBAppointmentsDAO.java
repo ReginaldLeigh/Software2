@@ -5,12 +5,11 @@ import javafx.collections.ObservableList;
 import software2.software2.database.JDBC;
 import software2.software2.model.Appointment;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDateTime;
 
 public class DBAppointmentsDAO {
+    private static int newAppointmentID = 0;
     public static ObservableList<Appointment> getAllAppointments() {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -33,14 +32,14 @@ public class DBAppointmentsDAO {
                 String description = rs.getString("Description");
                 String location = rs.getString("Location");
                 String type = rs.getString("Type");
-                String start = rs.getString("Start");
-                String end = rs.getString("End");
+                Timestamp start = rs.getTimestamp("Start");
+                Timestamp end = rs.getTimestamp("End");
                 int customerId = rs.getInt("Customer_ID");
                 int userId = rs.getInt("User_ID");
                 int contactId = rs.getInt("Contact_ID");
 
                 //make an object instance
-                Appointment appointment = new Appointment(id, title, description, location, type, start, end, customerId, userId, contactId);
+                Appointment appointment = new Appointment(id, title, description, location, type, start.toLocalDateTime(), end.toLocalDateTime(), customerId, userId, contactId);
 
                 //add to list
                 appointments.add(appointment);
@@ -53,6 +52,25 @@ public class DBAppointmentsDAO {
         }
         //return the list
         return appointments;
+    }
+
+    public static void setNewApptID() {
+        String sql = "SELECT MAX(Appointment_ID) FROM client_schedule.appointments";
+        try {
+            //make the prepared statement
+            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+            //make the query ==> resultSet
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                int appointmentID = rs.getInt("MAX(Appointment_ID)");
+                newAppointmentID = appointmentID + 1;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void addAppointment(Appointment appointment) {
@@ -76,6 +94,7 @@ public class DBAppointmentsDAO {
             //make the prepared statement
             Statement statement = JDBC.getConnection().createStatement();
 
+
             //make the query ==> resultSet
             statement.executeUpdate(sql);
 
@@ -94,8 +113,8 @@ public class DBAppointmentsDAO {
                 "Description = '" + appointment.getDescription() + "', " +
                 "Location = '" + appointment.getLocation() + "', " +
                 "Type = '" + appointment.getType() + "', " +
-                "Start = '" + appointment.getStart() + "', " +
-                "End = '" + appointment.getEnd() + "', " +
+                "Start = '" + Timestamp.valueOf(appointment.getStart()) + "', " +
+                "End = '" + Timestamp.valueOf(appointment.getEnd()) + "', " +
                 "Customer_ID = '" + appointment.getCustomerId() + "', " +
                 "User_ID = '" + appointment.getUserId() + "', " +
                 "Contact_ID = '" + appointment.getContactId() + "' " +
@@ -155,14 +174,14 @@ public class DBAppointmentsDAO {
                 String description = rs.getString("Description");
                 String location = rs.getString("Location");
                 String type = rs.getString("Type");
-                String start = rs.getString("Start");
-                String end = rs.getString("End");
+                Timestamp start = rs.getTimestamp("Start");
+                Timestamp end = rs.getTimestamp("End");
                 int customerId = rs.getInt("Customer_ID");
                 int userId = rs.getInt("User_ID");
                 int contactId = rs.getInt("Contact_ID");
 
                 //make an object instance
-                Appointment appointment = new Appointment(id, title, description, location, type, start, end, customerId, userId, contactId);
+                Appointment appointment = new Appointment(id, title, description, location, type, start.toLocalDateTime(), end.toLocalDateTime(), customerId, userId, contactId);
 
                 //add to list
                 appointments.add(appointment);
@@ -181,12 +200,55 @@ public class DBAppointmentsDAO {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         //set up the sql
-        String sql = "SELECT * FROM client_schedule.appointments";
+        String sql = "SELECT Appointment_ID as 'Appointment ID', " +
+                "Title, " +
+                "Description, " +
+                "Location, " +
+                "Type, " +
+                "Customer_ID as 'Customer ID', " +
+                "Contact_ID as 'Contact ID' " +
+                "FROM client_schedule.appointments";
 
         //make the prepared statement
         PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
 
         //make the query ==> resultSet
         return ps.executeQuery();
+    }
+
+    public static Appointment getAppointment(int appointment_id) {
+        //set up the sql
+        String sql = "SELECT * FROM client_schedule.appointments WHERE appointment_id = " + appointment_id;
+        try {
+            //make the prepared statement
+            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+            //make the query ==> resultSet
+            ResultSet rs = ps.executeQuery();
+
+            //cycle through the resultSet
+            while(rs.next()) {
+                //pull out the data
+                int id = rs.getInt("Appointment_ID");
+                String title = rs.getString("Title");
+                String description = rs.getString("Description");
+                String location = rs.getString("Location");
+                String type = rs.getString("Type");
+                Timestamp start = rs.getTimestamp("Start");
+                Timestamp end = rs.getTimestamp("End");
+                int customerId = rs.getInt("Customer_ID");
+                int userId = rs.getInt("User_ID");
+                int contactId = rs.getInt("Contact_ID");
+
+                //make an object instance
+                Appointment appointment = new Appointment(id, title, description, location, type, start.toLocalDateTime(), end.toLocalDateTime(), customerId, userId, contactId);
+
+                return appointment;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //return the list
+        return null;
     }
 }

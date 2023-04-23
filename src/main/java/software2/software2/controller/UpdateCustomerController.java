@@ -63,6 +63,7 @@ public class UpdateCustomerController implements Initializable {
     @FXML
     private void onActionSave(ActionEvent event) throws IOException {
         Division division = divisionDropdown.getSelectionModel().getSelectedItem();
+        Country country = countryDropdown.getSelectionModel().getSelectedItem();
 
         int id = Integer.parseInt(idField.getText());
         String name = nameField.getText();
@@ -70,8 +71,9 @@ public class UpdateCustomerController implements Initializable {
         String postalCode = postalCodeField.getText();
         String phone = phoneNumField.getText();
         int divisionID = division.getDivisionID();
+        int countryID = country.getCountryID();
 
-        DBCustomersDAO.updateCustomer(new Customer(id, name, address, postalCode, phone, divisionID));
+        DBCustomersDAO.updateCustomer(new Customer(id, name, address, postalCode, phone, divisionID, countryID));
         switchScene(event, "/software2/software2/view/mainmenu.fxml");
     }
 
@@ -101,8 +103,22 @@ public class UpdateCustomerController implements Initializable {
         postalCodeField.setText(modifiedCustomer.getPostalCode());
         phoneNumField.setText(modifiedCustomer.getPhone());
 
+        ObservableList<Country> countries = DBCountriesDAO.getAllCountries();
+        countryDropdown.setItems(countries);
+        countryDropdown.setVisibleRowCount(5);
+
+        // grab country data from Customer
+        for (Country country: countries) {
+            if (country.getCountryID() == modifiedCustomer.getCountryID()) {
+                countryDropdown.setValue(country);
+                setDivisionDropdown(country);
+                break;
+            }
+        }
+
+        // set divisions based on current country
         ObservableList<Division> divisions = DBDivisionsDAO.getAllDivisions();
-        divisionDropdown.setItems(divisions);
+
         divisionDropdown.setVisibleRowCount(5);
 
         for (Division division: divisions) {
@@ -111,9 +127,5 @@ public class UpdateCustomerController implements Initializable {
                 break;
             }
         }
-
-        countryDropdown.setItems(DBCountriesDAO.getAllCountries());
-        countryDropdown.setPromptText("Please select a country...");
-        countryDropdown.setVisibleRowCount(5);
     }
 }

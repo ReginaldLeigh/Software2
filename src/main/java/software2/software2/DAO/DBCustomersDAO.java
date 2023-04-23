@@ -48,7 +48,9 @@ public class DBCustomersDAO {
         //create a list to return
         ObservableList<Customer> customers = FXCollections.observableArrayList();
         //set up the sql
-        String sql = "SELECT * FROM client_schedule.customers";
+        String sql = "SELECT a.*, b.country_id FROM client_schedule.customers a " +
+                "LEFT JOIN client_schedule.first_level_divisions b " +
+                "ON a.division_id = b.division_id";
         try {
             //make the prepared statement
             PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
@@ -65,9 +67,10 @@ public class DBCustomersDAO {
                 String postalCode = rs.getString("Postal_Code");
                 String phone = rs.getString("Phone");
                 int divisionID = rs.getInt("Division_ID");
+                int countryID = rs.getInt("Country_ID");
 
                 //make an object instance
-                Customer customer = new Customer(id, name, address, postalCode, phone, divisionID);
+                Customer customer = new Customer(id, name, address, postalCode, phone, divisionID, countryID);
 
                 //add to list
                 customers.add(customer);
@@ -80,6 +83,46 @@ public class DBCustomersDAO {
         }
         //return the list
         return customers;
+    }
+
+    public static Customer getCustomer(int customer_id) {
+        //set up the sql
+        String sql = "SELECT a.*, b.country_id FROM client_schedule.customers a " +
+                "LEFT JOIN client_schedule.first_level_divisions b " +
+                "ON a.division_id = b.division_id " +
+                "WHERE customer_id = " + customer_id;
+        try {
+            //make the prepared statement
+            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+            //make the query ==> resultSet
+            ResultSet rs = ps.executeQuery();
+
+            //cycle through the resultSet
+            while(rs.next()) {
+                //pull out the data
+                int id = rs.getInt("Customer_ID");
+                String name = rs.getString("Customer_Name");
+                String address = rs.getString("Address");
+                String postalCode = rs.getString("Postal_Code");
+                String phone = rs.getString("Phone");
+                int divisionID = rs.getInt("Division_ID");
+                int countryID = rs.getInt("Country_ID");
+
+                //make an object instance
+                Customer customer = new Customer(id, name, address, postalCode, phone, divisionID, countryID);
+
+                //add to list
+                return customer;
+            }
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //return the list
+        return null;
     }
 
     public static void addCustomer(Customer customer) {
@@ -167,41 +210,22 @@ public class DBCustomersDAO {
         return associatedAppts;
     }
 
-//    public static void setCustomerTable(TableView tableView) {
-//        //create a list to return
-//        ObservableList<Customer> customers = FXCollections.observableArrayList();
-//        //set up the sql
-//        String sql = "SELECT * FROM client_schedule.customers";
-//        try {
-//            //make the prepared statement
-//            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
-//
-//            //make the query ==> resultSet
-//            ResultSet rs = ps.executeQuery();
-//
-//            for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-//                final int j = i;
-//                TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i + 1));
-//                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>, ObservableValue<String>>() {
-//                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-//                        return new SimpleStringProperty(param.getValue().get(j).toString());
-//                    }
-//                });
-//
-//                tableView.getColumns().addAll(col);
-//                System.out.println("Column [" + i + "]");
-//            }
-//
-//            tableView.setItems(DBCustomersDAO.getAllCustomers());
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public static ResultSet getResultSet() throws SQLException {
         //set up the sql
-        String sql = "SELECT customer_ID, customer_name, address, postal_code, division_id FROM client_schedule.customers";
+        String sql = "SELECT a.customer_id as 'ID', " +
+                "a.customer_name as 'Name', " +
+                "a.address as Address, " +
+                "a.postal_code as 'Postal Code', " +
+                "a.Phone, " +
+                "a.create_date as 'Create Date', " +
+                "a.created_by as 'Created By', " +
+                "a.last_update as 'Last Update', " +
+                "a.last_updated_by 'Last Updated By', " +
+                "b.division as 'Division' " +
+                "FROM client_schedule.customers a " +
+                "LEFT JOIN client_schedule.first_level_divisions b " +
+                "ON a.division_id = b.division_id";
+
         //make the prepared statement
         PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
 

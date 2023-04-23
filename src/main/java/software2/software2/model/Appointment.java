@@ -9,13 +9,13 @@ public class Appointment {
     private String description;
     private String location;
     private String type;
-    private String start;
-    private String end;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private int customerId;
     private int userId;
     private int contactId;
 
-    public Appointment(int id, String title, String description, String location, String type, String start, String end, int customerId, int userId, int contactId) {
+    public Appointment(int id, String title, String description, String location, String type, LocalDateTime start, LocalDateTime end, int customerId, int userId, int contactId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -68,19 +68,19 @@ public class Appointment {
         this.type = type;
     }
 
-    public String getStart() {
+    public LocalDateTime getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(LocalDateTime start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public LocalDateTime getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(LocalDateTime end) {
         this.end = end;
     }
 

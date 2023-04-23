@@ -60,6 +60,7 @@ public class AddCustomerController implements Initializable {
     @FXML
     private void onActionSave(ActionEvent event) throws IOException {
         Division division = divisionDropdown.getSelectionModel().getSelectedItem();
+        Country country = countryDropdown.getSelectionModel().getSelectedItem();
 
         int id = DBCustomersDAO.getNewCustomerID();
         String name = nameField.getText();
@@ -67,8 +68,9 @@ public class AddCustomerController implements Initializable {
         String postalCode = postalCodeField.getText();
         String phone = phoneNumField.getText();
         int divisionID = division.getDivisionID();
+        int countryID = country.getCountryID();
 
-        DBCustomersDAO.addCustomer(new Customer(id, name, address, postalCode, phone, divisionID));
+        DBCustomersDAO.addCustomer(new Customer(id, name, address, postalCode, phone, divisionID, countryID));
         switchScene(event, "/software2/software2/view/mainmenu.fxml");
     }
 

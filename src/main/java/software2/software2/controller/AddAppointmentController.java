@@ -56,7 +56,7 @@ public class AddAppointmentController implements Initializable {
         int userId;
         int contactId;
 
-        DBCustomersDAO.addCustomer(new Customer(4, "test1", "new test", "georgia", "test", 999));
+        DBCustomersDAO.addCustomer(new Customer(4, "test1", "new test", "georgia", "test", 999,999));
         switchScene(event, "/software2/software2/view/mainmenu.fxml");
     }
 
