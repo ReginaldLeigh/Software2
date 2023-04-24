@@ -42,9 +42,9 @@ public class MainMenuController implements Initializable {
     Parent scene;
     Stage stage;
 
-    public void switchScene(ActionEvent event, String resource) throws IOException {
+    public void switchScene(ActionEvent event, String resource, int width, int height) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 500, 500);
+        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), width, height);
         stage.setScene(scene);
         stage.show();
     }
@@ -52,9 +52,9 @@ public class MainMenuController implements Initializable {
     @FXML
     private void onActionAdd(ActionEvent event) throws IOException {
         if (customerBtn.isSelected()) {
-            switchScene(event, "/software2/software2/view/addCustomer.fxml");
+            switchScene(event, "/software2/software2/view/addCustomer.fxml", 500, 400);
         } else {
-            switchScene(event, "/software2/software2/view/addAppointment.fxml");
+            switchScene(event, "/software2/software2/view/addAppointment.fxml", 700, 550);
         }
     }
 
@@ -66,9 +66,11 @@ public class MainMenuController implements Initializable {
         if (customerBtn.isSelected()) {
             Customer customer = DBCustomersDAO.getCustomer(Integer.parseInt(id));
             UpdateCustomerController.setCustomer(customer);
-            switchScene(event, "/software2/software2/view/updateCustomer.fxml");
+            switchScene(event, "/software2/software2/view/updateCustomer.fxml", 500, 400);
         } else {
-//            Appointment appointment = new Appointment();
+            Appointment appointment = DBAppointmentsDAO.getAppointment(Integer.parseInt(id));
+            UpdateAppointmentController.setAppointment(appointment);
+            switchScene(event, "/software2/software2/view/updateAppointment.fxml", 700, 550);
         }
 
     }
@@ -133,7 +135,7 @@ public class MainMenuController implements Initializable {
 
     @FXML
     private void onActionLogout(ActionEvent event) throws IOException {
-        switchScene(event, "/software2/software2/view/login.fxml");
+        switchScene(event, "/software2/software2/view/login.fxml", 400, 400);
     }
 
     // Dynamically adds data to mainmenu tableView based on database results
@@ -202,5 +204,6 @@ public class MainMenuController implements Initializable {
         }
 
         DBCustomersDAO.setNewCustomerID();
+        DBAppointmentsDAO.setNewAppointmentID();
     }
 }

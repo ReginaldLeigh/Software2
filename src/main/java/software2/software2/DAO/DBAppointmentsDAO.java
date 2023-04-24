@@ -10,6 +10,30 @@ import java.time.LocalDateTime;
 
 public class DBAppointmentsDAO {
     private static int newAppointmentID = 0;
+
+    public static int getNewAppointmentID() {
+        return newAppointmentID;
+    }
+
+    public static void setNewAppointmentID() {
+        String sql = "SELECT MAX(Appointment_ID) FROM client_schedule.appointments";
+        try {
+            //make the prepared statement
+            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+            //make the query ==> resultSet
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()) {
+                int appointmentID = rs.getInt("MAX(Appointment_ID)");
+                newAppointmentID = appointmentID + 1;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static ObservableList<Appointment> getAllAppointments() {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -54,25 +78,6 @@ public class DBAppointmentsDAO {
         return appointments;
     }
 
-    public static void setNewApptID() {
-        String sql = "SELECT MAX(Appointment_ID) FROM client_schedule.appointments";
-        try {
-            //make the prepared statement
-            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
-
-            //make the query ==> resultSet
-            ResultSet rs = ps.executeQuery();
-
-            while(rs.next()) {
-                int appointmentID = rs.getInt("MAX(Appointment_ID)");
-                newAppointmentID = appointmentID + 1;
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void addAppointment(Appointment appointment) {
 
         //set up the sql
@@ -113,8 +118,8 @@ public class DBAppointmentsDAO {
                 "Description = '" + appointment.getDescription() + "', " +
                 "Location = '" + appointment.getLocation() + "', " +
                 "Type = '" + appointment.getType() + "', " +
-                "Start = '" + Timestamp.valueOf(appointment.getStart()) + "', " +
-                "End = '" + Timestamp.valueOf(appointment.getEnd()) + "', " +
+                "Start = '" + appointment.getStart() + "', " +
+                "End = '" + appointment.getEnd() + "', " +
                 "Customer_ID = '" + appointment.getCustomerId() + "', " +
                 "User_ID = '" + appointment.getUserId() + "', " +
                 "Contact_ID = '" + appointment.getContactId() + "' " +
@@ -154,47 +159,47 @@ public class DBAppointmentsDAO {
         }
     }
 
-    public static ObservableList<Appointment> setAppointments() {
-        //create a list to return
-        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-        //set up the sql
-        String sql = "SELECT * FROM client_schedule.appointments";
-        try {
-            //make the prepared statement
-            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
-
-            //make the query ==> resultSet
-            ResultSet rs = ps.executeQuery();
-
-            //cycle through the resultSet
-            while(rs.next()) {
-                //pull out the data
-                int id = rs.getInt("Appointment_ID");
-                String title = rs.getString("Title");
-                String description = rs.getString("Description");
-                String location = rs.getString("Location");
-                String type = rs.getString("Type");
-                Timestamp start = rs.getTimestamp("Start");
-                Timestamp end = rs.getTimestamp("End");
-                int customerId = rs.getInt("Customer_ID");
-                int userId = rs.getInt("User_ID");
-                int contactId = rs.getInt("Contact_ID");
-
-                //make an object instance
-                Appointment appointment = new Appointment(id, title, description, location, type, start.toLocalDateTime(), end.toLocalDateTime(), customerId, userId, contactId);
-
-                //add to list
-                appointments.add(appointment);
-            }
-
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        //return the list
-        return appointments;
-    }
+//    public static ObservableList<Appointment> setAppointments() {
+//        //create a list to return
+//        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+//        //set up the sql
+//        String sql = "SELECT * FROM client_schedule.appointments";
+//        try {
+//            //make the prepared statement
+//            PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+//
+//            //make the query ==> resultSet
+//            ResultSet rs = ps.executeQuery();
+//
+//            //cycle through the resultSet
+//            while(rs.next()) {
+//                //pull out the data
+//                int id = rs.getInt("Appointment_ID");
+//                String title = rs.getString("Title");
+//                String description = rs.getString("Description");
+//                String location = rs.getString("Location");
+//                String type = rs.getString("Type");
+//                Timestamp start = rs.getTimestamp("Start");
+//                Timestamp end = rs.getTimestamp("End");
+//                int customerId = rs.getInt("Customer_ID");
+//                int userId = rs.getInt("User_ID");
+//                int contactId = rs.getInt("Contact_ID");
+//
+//                //make an object instance
+//                Appointment appointment = new Appointment(id, title, description, location, type, start.toLocalDateTime(), end.toLocalDateTime(), customerId, userId, contactId);
+//
+//                //add to list
+//                appointments.add(appointment);
+//            }
+//
+//
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        //return the list
+//        return appointments;
+//    }
 
     public static ResultSet getResultSet() throws SQLException {
         //create a list to return

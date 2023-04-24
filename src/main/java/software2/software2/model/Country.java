@@ -8,12 +8,11 @@ public class Country {
     private int countryID;
     private String countryName;
     private ObservableList<Division> division = FXCollections.observableArrayList();
-    //private LocalDateTime dateTime;
+
 
     public Country(int countryID, String countryName) {
         this.countryID = countryID;
         this.countryName = countryName;
-        //this.dateTime = dateTime;
     }
 
     public int getCountryID() {
@@ -23,10 +22,6 @@ public class Country {
     public String getCountryName() {
         return countryName;
     }
-
-//    public LocalDateTime getDateTime() {
-//        return dateTime;
-//    }
 
     public ObservableList<Division> getDivisions() {
         ObservableList<Division> allDivisions = DBDivisionsDAO.getAllDivisions();

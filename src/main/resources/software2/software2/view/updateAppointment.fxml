@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" prefHeight="550.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="software2.software2.controller.AddAppointmentController">
+<AnchorPane maxHeight="-Infinity" prefHeight="550.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="software2.software2.controller.UpdateAppointmentController">
    <children>
       <VBox maxHeight="-Infinity" prefHeight="550.0" prefWidth="700.0" spacing="15.0">
          <children>

@@ -19,7 +19,6 @@ import java.sql.Statement;
 
 public class DBCustomersDAO {
     private static int newCustomerID = 0;
-    private static ResultSet resultSet;
 
     public static int getNewCustomerID() {
         return newCustomerID;

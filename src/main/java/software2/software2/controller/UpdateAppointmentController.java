@@ -1,5 +1,6 @@
 package software2.software2.controller;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,21 +16,16 @@ import software2.software2.DAO.DBAppointmentsDAO;
 import software2.software2.DAO.DBContactsDAO;
 import software2.software2.DAO.DBCustomersDAO;
 import software2.software2.DAO.DBUsersDAO;
-import software2.software2.model.Appointment;
-import software2.software2.model.Contact;
-import software2.software2.model.Customer;
-import software2.software2.model.User;
+import software2.software2.model.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
-public class AddAppointmentController implements Initializable {
+public class UpdateAppointmentController implements Initializable {
 
     @FXML
     private TextField idField;
@@ -46,13 +42,9 @@ public class AddAppointmentController implements Initializable {
     @FXML
     private ComboBox<LocalTime> startHours;
     @FXML
-    private ComboBox<String> startMins;
-    @FXML
     private DatePicker endDatepicker;
     @FXML
     private ComboBox<LocalTime> endHours;
-    @FXML
-    private ComboBox<String> endMins;
     @FXML
     private ComboBox<Customer> customerDropdown;
     @FXML
@@ -64,12 +56,16 @@ public class AddAppointmentController implements Initializable {
     Parent scene;
     Stage stage;
 
+    private static Appointment modifiedAppointment;
+
     public void switchScene(ActionEvent event, String resource) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 800);
         stage.setScene(scene);
         stage.show();
     }
+
+    public static void setAppointment(Appointment appointment) { modifiedAppointment = appointment; }
 
     @FXML
     private void onActionCancel(ActionEvent event) throws IOException {
@@ -102,13 +98,21 @@ public class AddAppointmentController implements Initializable {
         switchScene(event, "/software2/software2/view/mainmenu.fxml");
     }
 
-    public void setIdField() {
-        idField.setText(String.valueOf(DBAppointmentsDAO.getNewAppointmentID()));
-    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setIdField();
+        idField.setText(String.valueOf(modifiedAppointment.getId()));
+        titleField.setText(modifiedAppointment.getTitle());
+        descriptionField.setText(modifiedAppointment.getDescription());
+        locationField.setText(modifiedAppointment.getLocation());
+        typeField.setText(modifiedAppointment.getType());
+        startDatepicker.setValue(modifiedAppointment.getStart().toLocalDate());
+        startHours.setValue(modifiedAppointment.getStart().toLocalTime());
+        endDatepicker.setValue(modifiedAppointment.getEnd().toLocalDate());
+        endHours.setValue(modifiedAppointment.getEnd().toLocalTime());
+        customerDropdown.setValue(DBCustomersDAO.getCustomer(modifiedAppointment.getCustomerId()));
+
 
         LocalTime start = LocalTime.of(0,0);
         LocalTime end = LocalTime.of(23,50);
