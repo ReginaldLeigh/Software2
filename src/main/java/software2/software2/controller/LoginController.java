@@ -70,11 +70,13 @@ public class LoginController implements Initializable {
         String password = passwordField.getText();
         boolean usernameFound = false;
         boolean passwordMatch = false;
+        User currentUser = null;
 
         // Search user list for matching username
         for (User user: DBUsersDAO.getAllUsers()) {
             if (Objects.equals(username, user.getUsername())) {
                 usernameFound = true;
+                currentUser = user;
             }
 
             // If match found, check password
@@ -93,6 +95,7 @@ public class LoginController implements Initializable {
 
         // If username/password match, allow user access
         if (usernameFound && passwordMatch) {
+            DBUsersDAO.setCurrentUser(currentUser);
             switchScene(event, "/software2/software2/view/mainmenu.fxml");
         }
     }

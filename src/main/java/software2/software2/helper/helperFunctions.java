@@ -3,7 +3,9 @@ package software2.software2.helper;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -14,9 +16,17 @@ public class helperFunctions {
         ZoneId zoneId = ZoneId.systemDefault();
         return zoneId;
     }
-    public static DateFormat UTCtoLocal() {
-        DateFormat utc = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        return utc;
+
+    public static LocalDateTime convertToEST(LocalDateTime local) {
+        ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+        LocalDateTime timeEst = zonedLocal.withZoneSameInstant(ZoneId.of("America/New_York")).toLocalDateTime();
+        return timeEst ;
+    }
+
+    public static LocalDateTime convertToUTC(LocalDateTime local) {
+        ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+        LocalDateTime timeUTC = zonedLocal.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+        return timeUTC;
     }
 
     public static Locale getLocale() {

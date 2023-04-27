@@ -211,7 +211,7 @@ public class DBCustomersDAO {
 
     public static ResultSet getResultSet() throws SQLException {
         //set up the sql
-        String sql = "SELECT a.customer_id as 'ID', " +
+        String sql = "SELECT a.customer_id as 'Customer ID', " +
                 "a.customer_name as 'Name', " +
                 "a.address as Address, " +
                 "a.postal_code as 'Postal Code', " +
