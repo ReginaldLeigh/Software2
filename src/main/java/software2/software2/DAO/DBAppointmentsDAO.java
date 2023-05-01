@@ -264,4 +264,77 @@ public class DBAppointmentsDAO {
         //return the list
         return appointments;
     }
+
+    public static ResultSet getApptByType(String type) throws SQLException {
+        //create a list to return
+        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+        //set up the sql
+        String sql = "SELECT a.Appointment_ID as 'Appointment ID', " +
+                "a.Title, " +
+                "a.Description, " +
+                "a.Location, " +
+                "b.Contact_Name as 'Contact Name', " +
+                "a.Type, " +
+                "a.Start as 'Start Date', " +                            // Start and End are repeated to allow
+                "a.Start as 'Start Time', " +                            // for column creation in main page tableView
+                "a.End as 'End Date', " +
+                "a.End as 'End Time', " +
+                "a.Customer_ID as 'Customer ID', " +
+                "a.User_ID as 'User ID' " +
+                "FROM client_schedule.appointments a " +
+                "LEFT JOIN client_schedule.contacts b ON a.contact_id = b.contact_id " +
+                "WHERE a.Type = '" + type + "'";
+
+        //make the prepared statement
+        PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+        //make the query ==> resultSet
+        return ps.executeQuery();
+    }
+
+    public static ObservableList<String> getApptTypes() throws SQLException {
+        ObservableList<String> apptTypes = FXCollections.observableArrayList();
+
+        //set up the sql
+        String sql = "SELECT DISTINCT(type) FROM client_schedule.appointments ";
+
+        //make the prepared statement
+        PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+        //make the query ==> resultSet
+        ResultSet rs = ps.executeQuery();
+
+        rs.getMetaData();
+
+        while (rs.next()) {
+            apptTypes.add(rs.getString("Type"));
+        }
+
+        return apptTypes;
+    }
+
+    public static ResultSet getApptByContact(int contactId) throws SQLException {
+        //set up the sql
+        String sql = "SELECT a.Appointment_ID as 'Appointment ID', " +
+                "a.Title, " +
+                "a.Description, " +
+                "a.Location, " +
+                "b.Contact_Name as 'Contact Name', " +
+                "a.Type, " +
+                "a.Start as 'Start Date', " +                            // Start and End are repeated to allow
+                "a.Start as 'Start Time', " +                            // for column creation in main page tableView
+                "a.End as 'End Date', " +
+                "a.End as 'End Time', " +
+                "a.Customer_ID as 'Customer ID', " +
+                "a.User_ID as 'User ID' " +
+                "FROM client_schedule.appointments a " +
+                "LEFT JOIN client_schedule.contacts b ON a.contact_id = b.contact_id " +
+                "WHERE b.contact_id = " + contactId;
+
+        //make the prepared statement
+        PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+        //make the query ==> resultSet
+        return ps.executeQuery();
+    }
 }

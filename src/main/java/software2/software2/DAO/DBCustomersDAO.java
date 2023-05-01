@@ -232,4 +232,30 @@ public class DBCustomersDAO {
         ResultSet rs = ps.executeQuery();
         return rs;
     }
+
+    public static ResultSet getCustByCountry(int country_id) throws SQLException {
+        //set up the sql
+        String sql = "SELECT a.customer_id as 'Customer ID', " +
+                "a.customer_name as 'Name', " +
+                "a.address as Address, " +
+                "a.postal_code as 'Postal Code', " +
+                "a.Phone, " +
+                "a.create_date as 'Create Date', " +
+                "a.created_by as 'Created By', " +
+                "a.last_update as 'Last Update', " +
+                "a.last_updated_by 'Last Updated By', " +
+                "b.division as 'Division', " +
+                "c.country as 'Country' " +
+                "FROM client_schedule.customers a " +
+                "LEFT JOIN client_schedule.first_level_divisions b ON a.division_id = b.division_id " +
+                "LEFT JOIN client_schedule.countries c ON b.country_id = c.country_id " +
+                "WHERE c.country_id = " + country_id;
+
+        //make the prepared statement
+        PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);
+
+        //make the query ==> resultSet
+        ResultSet rs = ps.executeQuery();
+        return rs;
+    }
 }

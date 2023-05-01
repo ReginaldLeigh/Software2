@@ -5,20 +5,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import software2.software2.DAO.DBAppointmentsDAO;
-import software2.software2.DAO.DBCustomersDAO;
 import software2.software2.database.JDBC;
 import software2.software2.helper.helperFunctions;
 import software2.software2.model.Appointment;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(main.class.getResource("view/mainmenu.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1400, 800);
+        FXMLLoader fxmlLoader = new FXMLLoader(main.class.getResource("view/login.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 400, 400);
         ResourceBundle labels = helperFunctions.getResourceBundle();
         stage.setTitle(labels.getString("title"));
         stage.setScene(scene);

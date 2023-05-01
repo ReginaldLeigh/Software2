@@ -12,13 +12,19 @@ import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import software2.software2.DAO.DBUsersDAO;
+import software2.software2.helper.LocalToUTC;
 import software2.software2.helper.helperFunctions;
 import software2.software2.model.User;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 public class LoginController implements Initializable {
 
@@ -46,13 +52,14 @@ public class LoginController implements Initializable {
 
     public void switchScene(ActionEvent event, String resource) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 800);
+        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 600);
         stage.setScene(scene);
         stage.show();
     }
 
     private String getLocalTimeZone() {
-        return helperFunctions.getSystemZoneId().toString();
+        ZoneId zoneId = ZoneId.of(TimeZone.getDefault().getID());
+        return zoneId.toString();
     }
     
 
@@ -91,13 +98,34 @@ public class LoginController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR, labels.getString("error"));
             alert.setTitle(labels.getString("alertTitle"));
             alert.showAndWait();
+            logActivity(username, password, "FAIL");
         }
 
         // If username/password match, allow user access
         if (usernameFound && passwordMatch) {
             DBUsersDAO.setCurrentUser(currentUser);
+            logActivity(username, password, "SUCCESS");
             switchScene(event, "/software2/software2/view/mainmenu.fxml");
         }
+    }
+
+    private void logActivity(String username, String password, String status) throws IOException {
+        LocalToUTC utc = local -> {
+            ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+            LocalDateTime timeUTC = zonedLocal.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+            return timeUTC;
+        };
+        LocalDateTime timestamp = utc.convertToUTC(LocalDateTime.now());
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
+        String logAttempt = dtf.format(timestamp);
+        String filename = "src/main/login_activity.txt";
+        FileWriter writeFile = new FileWriter(filename, true);
+        PrintWriter logFile = new PrintWriter(writeFile);
+        logFile.println("Timestamp: " + logAttempt + " [UTC]");
+        logFile.println("Username: " + username);
+        logFile.println("Password: " + password);
+        logFile.println("Attempt Status: " + status);
+        logFile.close();
     }
 
     @Override

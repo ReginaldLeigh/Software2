@@ -14,6 +14,8 @@ import software2.software2.DAO.DBAppointmentsDAO;
 import software2.software2.DAO.DBContactsDAO;
 import software2.software2.DAO.DBCustomersDAO;
 import software2.software2.DAO.DBUsersDAO;
+import software2.software2.helper.LocalToEST;
+import software2.software2.helper.LocalToUTC;
 import software2.software2.helper.helperFunctions;
 import software2.software2.model.*;
 
@@ -84,15 +86,21 @@ public class UpdateAppointmentController implements Initializable {
         int userId = user.getId();
         int contactId = contact.getId();
 
+        LocalToUTC utc = local -> {
+            ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+            LocalDateTime timeUTC = zonedLocal.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+            return timeUTC;
+        };
+
         LocalDate startDate = startDatepicker.getValue();
         LocalTime startTime = startHours.getValue();
         LocalDateTime start = LocalDateTime.of(startDate, startTime);
-        LocalDateTime utcStart = helperFunctions.convertToUTC(start);
+        LocalDateTime utcStart = utc.convertToUTC(start);
 
         LocalDate endDate = endDatepicker.getValue();
         LocalTime endTime = endHours.getValue();
         LocalDateTime end = LocalDateTime.of(endDate, endTime);
-        LocalDateTime utcEnd = helperFunctions.convertToUTC(end);
+        LocalDateTime utcEnd = utc.convertToUTC(end);
 
 
         if (timeCheck(start, end) && checkOfficeHrs(start, end) && !checkOverlap(customerId, apptId, start, end)) {
@@ -113,10 +121,21 @@ public class UpdateAppointmentController implements Initializable {
             LocalDateTime Bstart = appointment.getStart();
             LocalDateTime Bend = appointment.getEnd();
 
-            LocalDateTime AstartEST = helperFunctions.convertToEST(Astart);
-            LocalDateTime AendEST = helperFunctions.convertToEST(Aend);
-            LocalDateTime BstartEST = helperFunctions.convertToEST(Bstart);
-            LocalDateTime BendEST = helperFunctions.convertToEST(Bend);
+            LocalToEST est = local -> {
+                ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+                LocalDateTime timeEst = zonedLocal.withZoneSameInstant(ZoneId.of("America/New_York")).toLocalDateTime();
+                return timeEst ;
+            };
+
+            LocalDateTime AstartEST = est.convertToEST(Astart);
+            LocalDateTime AendEST = est.convertToEST(Aend);
+            LocalDateTime BstartEST = est.convertToEST(Bstart);
+            LocalDateTime BendEST = est.convertToEST(Bend);
+
+//            LocalDateTime AstartEST = helperFunctions.convertToEST(Astart);
+//            LocalDateTime AendEST = helperFunctions.convertToEST(Aend);
+//            LocalDateTime BstartEST = helperFunctions.convertToEST(Bstart);
+//            LocalDateTime BendEST = helperFunctions.convertToEST(Bend);
 
             // prevent appt from conflicting with itself
             if (appointment.getId() == appt_id) {

@@ -4,15 +4,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="software2.software2.controller.MainMenuController">
+<AnchorPane maxHeight="-Infinity" prefHeight="600.0" prefWidth="1400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="software2.software2.controller.MainMenuController">
    <children>
-      <VBox prefHeight="800.0" prefWidth="1400.0">
+      <VBox prefHeight="600.0" prefWidth="1400.0">
          <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1350.0" spacing="35.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="1350.0" spacing="50.0">
                <children>
-                  <Button fx:id="AddBtn" mnemonicParsing="false" onAction="#onActionAdd" text="Add Appointment" />
-                  <Button fx:id="UpdateBtn" mnemonicParsing="false" onAction="#onActionUpdate" text="Update Appointment" />
-                  <Button fx:id="DeleteBtn" mnemonicParsing="false" onAction="#onActionDelete" text="Delete Appointment" />
+                  <Button fx:id="AddBtn" mnemonicParsing="false" onAction="#onActionAdd" prefWidth="150.0" text="Add Appointment" />
+                  <Button fx:id="UpdateBtn" mnemonicParsing="false" onAction="#onActionUpdate" prefWidth="150.0" text="Update Appointment" />
+                  <Button fx:id="DeleteBtn" mnemonicParsing="false" onAction="#onActionDelete" prefWidth="150.0" text="Delete Appointment" />
                   <RadioButton fx:id="customerBtn" mnemonicParsing="false" onAction="#onCustomerSelect" text="Customer View">
                      <toggleGroup>
                         <ToggleGroup fx:id="toggleView" />
@@ -21,6 +21,9 @@
                   <RadioButton fx:id="monthBtn" mnemonicParsing="false" onAction="#onActionMonth" text="Appointments By Month" toggleGroup="$toggleView" />
                   <RadioButton fx:id="weekBtn" mnemonicParsing="false" onAction="#onActionWeek" text="Appointments By Week" toggleGroup="$toggleView" />
                </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
             </HBox>
             <TableView fx:id="mainTable" maxWidth="-Infinity" prefHeight="400.0" prefWidth="1350.0">
                <columnResizePolicy>
@@ -30,7 +33,12 @@
                   <Insets left="25.0" />
                </VBox.margin>
             </TableView>
-            <Button fx:id="LogoutBtn" mnemonicParsing="false" onAction="#onActionLogout" text="Logout" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="75.0">
+               <children>
+                  <Button fx:id="reportBtn" mnemonicParsing="false" onAction="#onActionReport" prefWidth="150.0" text="Reports" />
+                  <Button fx:id="LogoutBtn" mnemonicParsing="false" onAction="#onActionLogout" prefWidth="150.0" text="Logout" />
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>

@@ -13,7 +13,8 @@ import software2.software2.DAO.DBAppointmentsDAO;
 import software2.software2.DAO.DBContactsDAO;
 import software2.software2.DAO.DBCustomersDAO;
 import software2.software2.DAO.DBUsersDAO;
-import software2.software2.helper.helperFunctions;
+import software2.software2.helper.LocalToEST;
+import software2.software2.helper.LocalToUTC;
 import software2.software2.model.Appointment;
 import software2.software2.model.Contact;
 import software2.software2.model.Customer;
@@ -21,13 +22,7 @@ import software2.software2.model.User;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Timestamp;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import java.time.*;
 import java.util.ResourceBundle;
 
 public class AddAppointmentController implements Initializable {
@@ -46,21 +41,18 @@ public class AddAppointmentController implements Initializable {
     private DatePicker startDatepicker;
     @FXML
     private ComboBox<LocalTime> startHours;
-    @FXML
-    private ComboBox<String> startMins;
+
     @FXML
     private DatePicker endDatepicker;
     @FXML
     private ComboBox<LocalTime> endHours;
-    @FXML
-    private ComboBox<String> endMins;
+
     @FXML
     private ComboBox<Customer> customerDropdown;
     @FXML
     private ComboBox<Contact> contactDropdown;
     @FXML
     private ComboBox<User> userDropdown;
-
 
     Parent scene;
     Stage stage;
@@ -95,12 +87,17 @@ public class AddAppointmentController implements Initializable {
         LocalDate startDate = startDatepicker.getValue();
         LocalTime startTime = startHours.getValue();
         LocalDateTime start = LocalDateTime.of(startDate, startTime);
-        LocalDateTime utcStart = helperFunctions.convertToUTC(start);
+        LocalToUTC utc = local -> {
+            ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+            LocalDateTime timeUTC = zonedLocal.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+            return timeUTC;
+        };
 
+        LocalDateTime utcStart = utc.convertToUTC(start);
         LocalDate endDate = endDatepicker.getValue();
         LocalTime endTime = endHours.getValue();
         LocalDateTime end = LocalDateTime.of(endDate, endTime);
-        LocalDateTime utcEnd = helperFunctions.convertToUTC(end);
+        LocalDateTime utcEnd = utc.convertToUTC(end);
 
         if (timeCheck(start, end) && checkOfficeHrs(start, end) && !checkOverlap(customerId, apptId, start, end)) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Successfully added appointment!");
@@ -124,10 +121,21 @@ public class AddAppointmentController implements Initializable {
             LocalDateTime Bstart = appointment.getStart();
             LocalDateTime Bend = appointment.getEnd();
 
-            LocalDateTime AstartEST = helperFunctions.convertToEST(Astart);
-            LocalDateTime AendEST = helperFunctions.convertToEST(Aend);
-            LocalDateTime BstartEST = helperFunctions.convertToEST(Bstart);
-            LocalDateTime BendEST = helperFunctions.convertToEST(Bend);
+            LocalToEST est = local -> {
+                ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+                LocalDateTime timeEst = zonedLocal.withZoneSameInstant(ZoneId.of("America/New_York")).toLocalDateTime();
+                return timeEst ;
+            };
+
+            LocalDateTime AstartEST = est.convertToEST(Astart);
+            LocalDateTime AendEST = est.convertToEST(Aend);
+            LocalDateTime BstartEST = est.convertToEST(Bstart);
+            LocalDateTime BendEST = est.convertToEST(Bend);
+
+//            LocalDateTime AstartEST = helperFunctions.convertToEST(Astart);
+//            LocalDateTime AendEST = helperFunctions.convertToEST(Aend);
+//            LocalDateTime BstartEST = helperFunctions.convertToEST(Bstart);
+//            LocalDateTime BendEST = helperFunctions.convertToEST(Bend);
 
             if ((AstartEST.isAfter(BstartEST) || AstartEST.isEqual(BstartEST)) && (AstartEST.isBefore(BendEST))) {
                 overlap = true;

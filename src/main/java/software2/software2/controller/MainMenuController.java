@@ -26,11 +26,13 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Timestamp;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.io.*;
 
 public class MainMenuController implements Initializable {
     @FXML
@@ -250,7 +252,6 @@ public class MainMenuController implements Initializable {
                     LocalDate endDate = end.toLocalDate();
                     LocalTime endTime = end.toLocalTime();
 
-
                     ObservableList<String> row = FXCollections.observableArrayList();
                     row.add(String.valueOf(id));
                     row.add(title);
@@ -299,6 +300,7 @@ public class MainMenuController implements Initializable {
             ObservableList<ObservableList> records = FXCollections.observableArrayList();
             LocalDate today = LocalDate.now();
             Month month = today.getMonth();
+            int year = today.getYear();
 
             resetTableColumns(rs);
 
@@ -321,7 +323,7 @@ public class MainMenuController implements Initializable {
                 LocalDate endDate = end.toLocalDate();
                 LocalTime endTime = end.toLocalTime();
 
-                if (startDate.getMonth() == month) {
+                if (startDate.getMonth() == month && startDate.getYear() == year) {
 
                     ObservableList<String> row = FXCollections.observableArrayList();
                     row.add(String.valueOf(id));
@@ -353,6 +355,7 @@ public class MainMenuController implements Initializable {
             ObservableList<ObservableList> records = FXCollections.observableArrayList();
             LocalDate today = LocalDate.now();
             int currWeek = today.get(WeekFields.of(helperFunctions.getLocale()).weekOfYear());
+            int currYear = today.getYear();
 
             resetTableColumns(rs);
 
@@ -376,7 +379,8 @@ public class MainMenuController implements Initializable {
                 LocalTime endTime = end.toLocalTime();
 
                 int apptWeek = startDate.get(WeekFields.of(helperFunctions.getLocale()).weekOfYear());
-                if (apptWeek == currWeek) {
+                int apptYear = startDate.getYear();
+                if (apptWeek == currWeek && apptYear == currYear) {
 
                     ObservableList<String> row = FXCollections.observableArrayList();
                     row.add(String.valueOf(id));
@@ -414,6 +418,43 @@ public class MainMenuController implements Initializable {
         filterWeek(DBAppointmentsDAO.getResultSet());
     }
 
+    private void signOnMeetingCheck() {
+        LocalDateTime currTime = LocalDateTime.now();
+        ObservableList<Appointment> appointments = DBAppointmentsDAO.getAllAppointments();
+        boolean upcomingAppts = false;
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Appointments");
+        alert.setHeaderText("Upcoming Appointment");
+
+        for (Appointment appointment: appointments) {
+            long timeDiff = ChronoUnit.MINUTES.between(currTime, appointment.getStart()) + 1;
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
+            String start = dtf.format(appointment.getStart());
+            String end = dtf.format(appointment.getEnd());
+
+            if (timeDiff >= 0 && timeDiff <= 15) {
+                upcomingAppts = true;
+                alert.setContentText("The following appointments will begin within " + timeDiff + " minutes: \n" +
+                        "Appointment ID: " + appointment.getId() + "\n" +
+                        "Start Time: " + start + "\n" +
+                        "End Time: " + end
+                        );
+                alert.showAndWait();
+            }
+        }
+
+        if (!upcomingAppts) {
+            alert.setContentText("There are no upcoming appointments");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    private void onActionReport(ActionEvent event) throws IOException {
+        switchScene(event, "/software2/software2/view/reports.fxml", 1400, 800);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
@@ -424,5 +465,6 @@ public class MainMenuController implements Initializable {
 
         DBCustomersDAO.setNewCustomerID();
         DBAppointmentsDAO.setNewAppointmentID();
+        signOnMeetingCheck();
     }
 }
