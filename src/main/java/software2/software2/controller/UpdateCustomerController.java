@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -64,29 +65,53 @@ public class UpdateCustomerController implements Initializable {
     private void onActionSave(ActionEvent event) throws IOException {
         Division division = divisionDropdown.getSelectionModel().getSelectedItem();
         Country country = countryDropdown.getSelectionModel().getSelectedItem();
+        boolean blankCheck = blankCheck();
 
-        int id = Integer.parseInt(idField.getText());
-        String name = nameField.getText();
-        String address = addressField.getText();
-        String postalCode = postalCodeField.getText();
-        String phone = phoneNumField.getText();
-        int divisionID = division.getDivisionID();
-        int countryID = country.getCountryID();
+        if (blankCheck) {
+            int id = Integer.parseInt(idField.getText());
+            String name = nameField.getText();
+            String address = addressField.getText();
+            String postalCode = postalCodeField.getText();
+            String phone = phoneNumField.getText();
+            int divisionID = division.getDivisionID();
+            int countryID = country.getCountryID();
 
-        DBCustomersDAO.updateCustomer(new Customer(id, name, address, postalCode, phone, divisionID, countryID));
-        switchScene(event, "/software2/software2/view/mainmenu.fxml");
+            DBCustomersDAO.updateCustomer(new Customer(id, name, address, postalCode, phone, divisionID, countryID));
+            switchScene(event, "/software2/software2/view/mainmenu.fxml");
+        }
     }
-
-//    @FXML
-//    private void setIDField() {
-//        idField.setText(String.valueOf(DBCustomersDAO.getNewCustomerID()));
-//    }
 
     @FXML
     private void setDivisionDropdown(Country country) {
         ObservableList<Division> divisions = country.getDivisions();
         divisionDropdown.setItems(divisions);
         divisionDropdown.getSelectionModel().selectFirst();
+    }
+
+    private boolean blankCheck() {
+        String fieldName = "";
+
+        if (nameField.getText() == "") {
+            fieldName = "Name";
+        } else if (addressField.getText() == "") {
+            fieldName = "Address";
+        } else if (postalCodeField.getText() == "") {
+            fieldName = "Postal Code";
+        } else if (phoneNumField.getText() == "") {
+            fieldName = "Phone Number";
+        } else if (countryDropdown.getValue() == null) {
+            fieldName = "Country";
+        } else if (divisionDropdown.getValue() == null) {
+            fieldName = "Division";
+        }
+
+        if (fieldName != "") {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid value for the " + fieldName + " field");
+            alert.setTitle("Add Customer");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
     }
 
     @FXML

@@ -74,38 +74,41 @@ public class AddAppointmentController implements Initializable {
         Customer customer = customerDropdown.getSelectionModel().getSelectedItem();
         Contact contact = contactDropdown.getSelectionModel().getSelectedItem();
         User user = userDropdown.getSelectionModel().getSelectedItem();
+        boolean blankCheck = blankCheck();
 
-        int apptId = Integer.parseInt(idField.getText());
-        String title = titleField.getText();
-        String description = descriptionField.getText();
-        String location = locationField.getText();
-        String type = typeField.getText();
-        int customerId = customer.getId();
-        int userId = user.getId();
-        int contactId = contact.getId();
+        if (blankCheck) {
+            int apptId = Integer.parseInt(idField.getText());
+            String title = titleField.getText();
+            String description = descriptionField.getText();
+            String location = locationField.getText();
+            String type = typeField.getText();
+            int customerId = customer.getId();
+            int userId = user.getId();
+            int contactId = contact.getId();
 
-        LocalDate startDate = startDatepicker.getValue();
-        LocalTime startTime = startHours.getValue();
-        LocalDateTime start = LocalDateTime.of(startDate, startTime);
-        LocalToUTC utc = local -> {
-            ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
-            LocalDateTime timeUTC = zonedLocal.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
-            return timeUTC;
-        };
+            LocalDate startDate = startDatepicker.getValue();
+            LocalTime startTime = startHours.getValue();
+            LocalDateTime start = LocalDateTime.of(startDate, startTime);
+            LocalToUTC utc = local -> {
+                ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
+                LocalDateTime timeUTC = zonedLocal.withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
+                return timeUTC;
+            };
 
-        LocalDateTime utcStart = utc.convertToUTC(start);
-        LocalDate endDate = endDatepicker.getValue();
-        LocalTime endTime = endHours.getValue();
-        LocalDateTime end = LocalDateTime.of(endDate, endTime);
-        LocalDateTime utcEnd = utc.convertToUTC(end);
+            LocalDateTime utcStart = utc.convertToUTC(start);
+            LocalDate endDate = endDatepicker.getValue();
+            LocalTime endTime = endHours.getValue();
+            LocalDateTime end = LocalDateTime.of(endDate, endTime);
+            LocalDateTime utcEnd = utc.convertToUTC(end);
 
-        if (timeCheck(start, end) && checkOfficeHrs(start, end) && !checkOverlap(customerId, apptId, start, end)) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Successfully added appointment!");
-            alert.setHeaderText("Success");
-            alert.setTitle("Appointments");
-            alert.showAndWait();
-            DBAppointmentsDAO.addAppointment(new Appointment(apptId, title, description, location, type, utcStart, utcEnd, customerId, userId, contactId));
-            switchScene(event, "/software2/software2/view/mainmenu.fxml");
+            if (timeCheck(start, end) && checkOfficeHrs(start, end) && !checkOverlap(customerId, apptId, start, end)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Successfully added appointment!");
+                alert.setHeaderText("Success");
+                alert.setTitle("Appointments");
+                alert.showAndWait();
+                DBAppointmentsDAO.addAppointment(new Appointment(apptId, title, description, location, type, utcStart, utcEnd, customerId, userId, contactId));
+                switchScene(event, "/software2/software2/view/mainmenu.fxml");
+            }
         }
     }
 
@@ -192,6 +195,42 @@ public class AddAppointmentController implements Initializable {
         }
 
         return inOrder;
+    }
+
+    private boolean blankCheck() {
+        String fieldName = "";
+
+        if (titleField.getText() == "") {
+            fieldName = "Title";
+        } else if (descriptionField.getText() == "") {
+            fieldName = "Description";
+        } else if (locationField.getText() == "") {
+            fieldName = "Location";
+        } else if (typeField.getText() == "") {
+            fieldName = "Type";
+        } else if (startDatepicker.getValue() == null) {
+            fieldName = "Start Date";
+        } else if (startHours.getValue() == null) {
+            fieldName = "Start Time";
+        } else if (endDatepicker.getValue() == null) {
+            fieldName = "End Date";
+        } else if (endHours.getValue() == null) {
+            fieldName = "End Time";
+        } else if (customerDropdown.getSelectionModel().getSelectedItem() == null) {
+            fieldName = "Customer";
+        } else if (contactDropdown.getSelectionModel().getSelectedItem() == null) {
+            fieldName = "Contact";
+        } else if (userDropdown.getSelectionModel().getSelectedItem() == null) {
+            fieldName = "User";
+        }
+
+        if (fieldName != "") {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid value for the " + fieldName + " field");
+            alert.setTitle("Add Appointment");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
     }
 
 

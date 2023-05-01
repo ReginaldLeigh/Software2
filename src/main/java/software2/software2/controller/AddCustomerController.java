@@ -61,17 +61,21 @@ public class AddCustomerController implements Initializable {
     private void onActionSave(ActionEvent event) throws IOException {
         Division division = divisionDropdown.getSelectionModel().getSelectedItem();
         Country country = countryDropdown.getSelectionModel().getSelectedItem();
+        boolean blankCheck = blankCheck();
 
-        int id = DBCustomersDAO.getNewCustomerID();
-        String name = nameField.getText();
-        String address = addressField.getText();
-        String postalCode = postalCodeField.getText();
-        String phone = phoneNumField.getText();
-        int divisionID = division.getDivisionID();
-        int countryID = country.getCountryID();
+        if (blankCheck) {
 
-        DBCustomersDAO.addCustomer(new Customer(id, name, address, postalCode, phone, divisionID, countryID));
-        switchScene(event, "/software2/software2/view/mainmenu.fxml");
+            int id = DBCustomersDAO.getNewCustomerID();
+            String name = nameField.getText();
+            String address = addressField.getText();
+            String postalCode = postalCodeField.getText();
+            String phone = phoneNumField.getText();
+            int divisionID = division.getDivisionID();
+            int countryID = country.getCountryID();
+
+            DBCustomersDAO.addCustomer(new Customer(id, name, address, postalCode, phone, divisionID, countryID));
+            switchScene(event, "/software2/software2/view/mainmenu.fxml");
+        }
     }
 
     @FXML
@@ -84,6 +88,32 @@ public class AddCustomerController implements Initializable {
         ObservableList<Division> divisions = country.getDivisions();
         divisionDropdown.setItems(divisions);
         divisionDropdown.getSelectionModel().selectFirst();
+    }
+
+    private boolean blankCheck() {
+        String fieldName = "";
+
+        if (nameField.getText() == "") {
+            fieldName = "Name";
+        } else if (addressField.getText() == "") {
+            fieldName = "Address";
+        } else if (postalCodeField.getText() == "") {
+            fieldName = "Postal Code";
+        } else if (phoneNumField.getText() == "") {
+            fieldName = "Phone Number";
+        } else if (countryDropdown.getValue() == null) {
+            fieldName = "Country";
+        } else if (divisionDropdown.getValue() == null) {
+            fieldName = "Division";
+        }
+
+        if (fieldName != "") {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid value for the " + fieldName + " field");
+            alert.setTitle("Add Customer");
+            alert.showAndWait();
+            return false;
+        }
+        return true;
     }
 
     @FXML

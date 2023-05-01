@@ -12,5 +12,5 @@ MySQL Connector: mysql-connector-java 8.0.25
 Run Instructions: 
 
 Additional Report:
-	The report I added gives uses the ability to view customer by their home countries. This report can be found by logging in, selecting "Reports", 
-	select the "Customer by Country", and choosing a country in the combo box below. 
+	The report I added gives uses the ability to view customer by their registered countries. This report can be found by logging in, selecting "Reports", 
+	selecting "Total Customer by Country", and choosing a country in the combo box below. 
