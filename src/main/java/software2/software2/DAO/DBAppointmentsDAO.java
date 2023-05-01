@@ -294,31 +294,47 @@ public class DBAppointmentsDAO {
         return appointments;
     }
 
+//    /**
+//     * Returns a ResultSet consisting of all appointments of a certain type
+//     * @param type the appointment type
+//     * @return a ResultSet
+//     * @throws SQLException
+//     */
+//    public static ResultSet getApptByType(String type) throws SQLException {
+//        //create a list to return
+//        ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+//        //set up the sql
+//        String sql = "SELECT a.Appointment_ID as 'Appointment ID', " +
+//                "a.Title, " +
+//                "a.Description, " +
+//                "a.Location, " +
+//                "b.Contact_Name as 'Contact Name', " +
+//                "a.Type, " +
+//                "a.Start as 'Start Date', " +                            // Start and End are repeated to allow
+//                "a.Start as 'Start Time', " +                            // for column creation in main page tableView
+//                "a.End as 'End Date', " +
+//                "a.End as 'End Time', " +
+//                "a.Customer_ID as 'Customer ID', " +
+//                "a.User_ID as 'User ID' " +
+//                "FROM client_schedule.appointments a " +
+//                "LEFT JOIN client_schedule.contacts b ON a.contact_id = b.contact_id " +
+//                "WHERE a.Type = '" + type + "'";
     /**
      * Returns a ResultSet consisting of all appointments of a certain type
      * @param type the appointment type
      * @return a ResultSet
      * @throws SQLException
      */
-    public static ResultSet getApptByType(String type) throws SQLException {
+    public static ResultSet getApptByMonthAndType(String type) throws SQLException {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
         //set up the sql
-        String sql = "SELECT a.Appointment_ID as 'Appointment ID', " +
-                "a.Title, " +
-                "a.Description, " +
-                "a.Location, " +
-                "b.Contact_Name as 'Contact Name', " +
+        String sql = "SELECT a.Start as 'Month', " +
                 "a.Type, " +
-                "a.Start as 'Start Date', " +                            // Start and End are repeated to allow
-                "a.Start as 'Start Time', " +                            // for column creation in main page tableView
-                "a.End as 'End Date', " +
-                "a.End as 'End Time', " +
-                "a.Customer_ID as 'Customer ID', " +
-                "a.User_ID as 'User ID' " +
+                "COUNT(a.Type), " +
                 "FROM client_schedule.appointments a " +
-                "LEFT JOIN client_schedule.contacts b ON a.contact_id = b.contact_id " +
-                "WHERE a.Type = '" + type + "'";
+                "GROUP BY a.start, a.type "
+                ;
 
         //make the prepared statement
         PreparedStatement ps = JDBC.getConnection().prepareStatement(sql);

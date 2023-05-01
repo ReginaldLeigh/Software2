@@ -245,9 +245,6 @@ public class ReportController implements Initializable {
             if (contactBtn.isSelected()) {
                 Contact contact = (Contact) itemDropdown.getSelectionModel().getSelectedItem();
                 setMainTable(DBAppointmentsDAO.getApptByContact(contact.getId()));
-            } else if (typeBtn.isSelected()) {
-                String type = (String) itemDropdown.getSelectionModel().getSelectedItem();
-                setMainTable(DBAppointmentsDAO.getApptByType(type));
             } else if (monthBtn.isSelected()) {
                 setMainTable(DBAppointmentsDAO.getResultSet());
             } else if (countryBtn.isSelected()) {
