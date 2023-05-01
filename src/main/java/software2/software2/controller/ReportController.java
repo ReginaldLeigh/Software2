@@ -43,8 +43,6 @@ public class ReportController implements Initializable {
     @FXML
     private TableView mainTable;
     @FXML
-    private RadioButton typeBtn;
-    @FXML
     private RadioButton monthBtn;
     @FXML
     private RadioButton countryBtn;
@@ -166,6 +164,25 @@ public class ReportController implements Initializable {
 
                     records.add(row);
                 }
+            } else if (monthBtn.isSelected()) {
+                resetTableColumns(rs);
+
+                while (rs.next()) {
+                    Timestamp startDateTime = rs.getTimestamp("Month");
+                    String type = rs.getString("Type");
+                    int count = rs.getInt("Count");
+
+                    LocalDateTime start = startDateTime.toLocalDateTime();
+                    LocalDate startDate = start.toLocalDate();
+                    String month = startDate.getMonth().toString();
+
+                    ObservableList<String> row = FXCollections.observableArrayList();
+                    row.add(month);
+                    row.add(type);
+                    row.add(String.valueOf(count));
+
+                    records.add(row);
+                }
             } else {
                 resetTableColumns(rs);
 
@@ -188,42 +205,22 @@ public class ReportController implements Initializable {
                     LocalDate endDate = end.toLocalDate();
                     LocalTime endTime = end.toLocalTime();
 
-                    if (monthBtn.isSelected()) {
-                        Month month = (Month) itemDropdown.getSelectionModel().getSelectedItem();
-                        if (startDate.getMonth() == month) {
-                            ObservableList<String> row = FXCollections.observableArrayList();
-                            row.add(String.valueOf(id));
-                            row.add(title);
-                            row.add(description);
-                            row.add(location);
-                            row.add(contact);
-                            row.add(type);
-                            row.add(startDate.toString());
-                            row.add(startTime.toString());
-                            row.add(endDate.toString());
-                            row.add(endTime.toString());
-                            row.add(String.valueOf(customerId));
-                            row.add(String.valueOf(userId));
 
-                            records.add(row);
-                        }
-                    } else {
-                        ObservableList<String> row = FXCollections.observableArrayList();
-                        row.add(String.valueOf(id));
-                        row.add(title);
-                        row.add(description);
-                        row.add(location);
-                        row.add(contact);
-                        row.add(type);
-                        row.add(startDate.toString());
-                        row.add(startTime.toString());
-                        row.add(endDate.toString());
-                        row.add(endTime.toString());
-                        row.add(String.valueOf(customerId));
-                        row.add(String.valueOf(userId));
+                    ObservableList<String> row = FXCollections.observableArrayList();
+                    row.add(String.valueOf(id));
+                    row.add(title);
+                    row.add(description);
+                    row.add(location);
+                    row.add(contact);
+                    row.add(type);
+                    row.add(startDate.toString());
+                    row.add(startTime.toString());
+                    row.add(endDate.toString());
+                    row.add(endTime.toString());
+                    row.add(String.valueOf(customerId));
+                    row.add(String.valueOf(userId));
 
-                        records.add(row);
-                    }
+                    records.add(row);
                 }
             }
 
@@ -246,7 +243,7 @@ public class ReportController implements Initializable {
                 Contact contact = (Contact) itemDropdown.getSelectionModel().getSelectedItem();
                 setMainTable(DBAppointmentsDAO.getApptByContact(contact.getId()));
             } else if (monthBtn.isSelected()) {
-                setMainTable(DBAppointmentsDAO.getResultSet());
+                // Do nothing
             } else if (countryBtn.isSelected()) {
                 Country country = (Country) itemDropdown.getSelectionModel().getSelectedItem();
                 setMainTable(DBCustomersDAO.getCustByCountry(country.getCountryID()));
@@ -262,6 +259,9 @@ public class ReportController implements Initializable {
      */
     @FXML
     private void onContactSelect() {
+        mainTable.getColumns().clear();
+        mainTable.getItems().clear();
+        itemDropdown.setVisible(true);
         itemDropdown.getItems().clear();
         itemDropdown.setVisibleRowCount(3);
         itemLabel.setText("Contact");
@@ -270,34 +270,14 @@ public class ReportController implements Initializable {
     }
 
     /**
-     * Changes label and combo box for Monthly report
+     * Displays list of appointments by month and type
      */
     @FXML
-    private void onMonthSelect() {
-        itemDropdown.getItems().clear();
-        itemDropdown.setVisibleRowCount(3);
-        itemLabel.setText("Month");
+    private void onMonthSelect() throws SQLException {
+        setMainTable(DBAppointmentsDAO.getApptByMonthAndType());
+        itemDropdown.setVisible(false);
+        itemLabel.setText("");
         totalLabel.setText("");
-
-        ObservableList<Month> monthsList = FXCollections.observableArrayList();
-        Month[] months = Month.values();
-        for (Month month: months) {
-            monthsList.add(month);
-        }
-
-        itemDropdown.setItems(monthsList);
-    }
-
-    /**
-     * Changes label and combo box for Type report
-     */
-    @FXML
-    private void onTypeSelect() throws SQLException {
-        itemDropdown.getItems().clear();
-        itemDropdown.setVisibleRowCount(3);
-        itemLabel.setText("Appointment Type");
-        totalLabel.setText("");
-        itemDropdown.setItems(DBAppointmentsDAO.getApptTypes());
     }
 
     /**
@@ -305,6 +285,9 @@ public class ReportController implements Initializable {
      */
     @FXML
     private void onCountrySelect() throws SQLException {
+        mainTable.getColumns().clear();
+        mainTable.getItems().clear();
+        itemDropdown.setVisible(true);
         itemDropdown.getItems().clear();
         itemDropdown.setVisibleRowCount(3);
         itemLabel.setText("Country");

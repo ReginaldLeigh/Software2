@@ -14,9 +14,8 @@
                      <toggleGroup>
                         <ToggleGroup fx:id="toggleView" />
                      </toggleGroup></RadioButton>
-                  <RadioButton fx:id="monthBtn" mnemonicParsing="false" onAction="#onMonthSelect" text="Total Customer by Month" toggleGroup="$toggleView" />
-                  <RadioButton fx:id="typeBtn" mnemonicParsing="false" onAction="#onTypeSelect" text="Total Customer by Type" toggleGroup="$toggleView" />
-                  <RadioButton fx:id="countryBtn" mnemonicParsing="false" onAction="#onCountrySelect" text="Total Customer by Country" toggleGroup="$toggleView" />
+                  <RadioButton fx:id="monthBtn" mnemonicParsing="false" onAction="#onMonthSelect" text="Total Appointments By Month And Type" toggleGroup="$toggleView" />
+                  <RadioButton fx:id="countryBtn" mnemonicParsing="false" onAction="#onCountrySelect" text="Total Customers by Country" toggleGroup="$toggleView" />
                </children>
                <VBox.margin>
                   <Insets />
