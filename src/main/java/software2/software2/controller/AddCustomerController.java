@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Presents form which allows user to add new customers to system.
+ */
 public class AddCustomerController implements Initializable {
 
     @FXML
@@ -45,18 +48,32 @@ public class AddCustomerController implements Initializable {
     Parent scene;
     Stage stage;
 
+    /** Moves user to a different page within the application.
+     @param event An ActionEvent.
+     @param resource The file path for the next FXML resource to be loaded.
+     */
     public void switchScene(ActionEvent event, String resource) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 800);
+        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 600);
         stage.setScene(scene);
         stage.show();
     }
 
+    /**
+     * Returns user to the Main Menu
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionCancel(ActionEvent event) throws IOException {
         switchScene(event, "/software2/software2/view/mainmenu.fxml");
     }
 
+    /**
+     * Creates new Customer and pushes information into database.
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionSave(ActionEvent event) throws IOException {
         Division division = divisionDropdown.getSelectionModel().getSelectedItem();
@@ -78,11 +95,18 @@ public class AddCustomerController implements Initializable {
         }
     }
 
+    /**
+     * Sets Customer ID field
+     */
     @FXML
     private void setIDField() {
         idField.setText(String.valueOf(DBCustomersDAO.getNewCustomerID()));
     }
 
+    /**
+     * Sets information into Division combo box
+     * @param country a Country object
+     */
     @FXML
     private void setDivisionDropdown(Country country) {
         ObservableList<Division> divisions = country.getDivisions();
@@ -90,6 +114,10 @@ public class AddCustomerController implements Initializable {
         divisionDropdown.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Validates information has been entered in all form fields
+     * @return Returns boolean
+     */
     private boolean blankCheck() {
         String fieldName = "";
 
@@ -116,12 +144,21 @@ public class AddCustomerController implements Initializable {
         return true;
     }
 
+    /**
+     * Adds division information to combo box based on user selected Country
+     * @param event
+     */
     @FXML
     private void onActionSelect(ActionEvent event) {
         Country country = countryDropdown.getSelectionModel().getSelectedItem();
         setDivisionDropdown(country);
     }
 
+    /**
+     * On startup, places all available countries into combo box
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setIDField();

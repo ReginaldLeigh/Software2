@@ -1,5 +1,9 @@
 package software2.software2.model;
 
+/**
+ * Class used to create Division objects throughout the application.
+ * Each first level division can only be associated with one country.
+ */
 public class Division {
     private int divisionID;
     private String divisionName;
@@ -13,18 +17,6 @@ public class Division {
 
     public int getDivisionID() {
         return divisionID;
-    }
-
-    public void setDivisionID(int divisionID) {
-        this.divisionID = divisionID;
-    }
-
-    public String getDivisionName() {
-        return divisionName;
-    }
-
-    public void setDivisionName(String divisionName) {
-        this.divisionName = divisionName;
     }
 
     public int getCountryID() {

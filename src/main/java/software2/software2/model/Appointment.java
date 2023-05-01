@@ -3,6 +3,9 @@ package software2.software2.model;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+/**
+ * Class used to create Appointment objects throughout the application.
+ */
 public class Appointment {
     private int id;
     private String title;
@@ -88,23 +91,12 @@ public class Appointment {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-
     public int getUserId() {
         return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public int getContactId() {
         return contactId;
     }
 
-    public void setContactId(int contactId) {
-        this.contactId = contactId;
-    }
 }

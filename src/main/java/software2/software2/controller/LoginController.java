@@ -26,6 +26,9 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+/**
+ * Requires user credentials in order to access appointment system
+ */
 public class LoginController implements Initializable {
 
     Stage stage;
@@ -50,6 +53,10 @@ public class LoginController implements Initializable {
     private Button submitBtn;
 
 
+    /** Moves user to a different page within the application.
+     @param event An ActionEvent.
+     @param resource The file path for the next FXML resource to be loaded.
+     */
     public void switchScene(ActionEvent event, String resource) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 600);
@@ -57,12 +64,19 @@ public class LoginController implements Initializable {
         stage.show();
     }
 
+    /**
+     * Retrieves the user current time zone
+     * @return Returns the user time zone as a String
+     */
     private String getLocalTimeZone() {
         ZoneId zoneId = ZoneId.of(TimeZone.getDefault().getID());
         return zoneId.toString();
     }
-    
 
+
+    /**
+     * Sets text based on user locale
+     */
     private void setLoginLabels() {
         ResourceBundle labels = helperFunctions.getResourceBundle();
         usernameLabel.setText(labels.getString("username"));
@@ -71,6 +85,11 @@ public class LoginController implements Initializable {
         timeZoneLabel.setText(labels.getString("timezone") + ": " + getLocalTimeZone());
     }
 
+    /**
+     * Allows user access, or displays alert in credentials are not valid
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     void onActionLogin(ActionEvent event) throws IOException {
         String username = userNameField.getText();
@@ -109,6 +128,13 @@ public class LoginController implements Initializable {
         }
     }
 
+    /**
+     * Logs all login activity
+     * @param username username placed in form
+     * @param password password placed in form
+     * @param status Indicates whether the users credentials were valid
+     * @throws IOException
+     */
     private void logActivity(String username, String password, String status) throws IOException {
         LocalToUTC utc = local -> {
             ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
@@ -128,6 +154,11 @@ public class LoginController implements Initializable {
         logFile.close();
     }
 
+    /**
+     * On startup, sets display language and local timezone
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setLoginLabels();

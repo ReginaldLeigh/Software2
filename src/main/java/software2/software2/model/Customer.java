@@ -1,5 +1,9 @@
 package software2.software2.model;
 
+/**
+ * Class used to create Customer objects throughout the application.
+ * Each customer can be assigned to multiple appointments at once.
+ */
 public class Customer {
     private int id;
     private String name;

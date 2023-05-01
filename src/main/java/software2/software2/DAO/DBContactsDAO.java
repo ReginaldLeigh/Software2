@@ -11,7 +11,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Acts as the connection between the database and any information regarding contacts
+ */
 public class DBContactsDAO {
+    /**
+     * Retrieves all contacts from the database
+     * @return a list of contacts
+     */
     public static ObservableList<Contact> getAllContacts() {
         //create a list to return
         ObservableList<Contact> contacts = FXCollections.observableArrayList();
@@ -44,6 +51,11 @@ public class DBContactsDAO {
         return contacts;
     }
 
+    /**
+     * Retrieves a contact from the database
+     * @param contact_id a contact ID
+     * @return a Contact object
+     */
     public static Contact getContact(int contact_id) {
         //set up the sql
         String sql = "SELECT * FROM client_schedule.contacts " +

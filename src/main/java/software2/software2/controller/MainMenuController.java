@@ -10,7 +10,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import software2.software2.DAO.DBAppointmentsDAO;
 import software2.software2.DAO.DBCustomersDAO;
@@ -19,26 +18,26 @@ import software2.software2.model.Appointment;
 import software2.software2.model.Customer;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.WeekFields;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.io.*;
 
+/**
+ * Controls user functions for the Main Menu of the application.
+ * Allows users to add, update, and delete customers and appointments.
+ * User may also view additional reports from this page as well.
+ */
 public class MainMenuController implements Initializable {
     @FXML
     private TableView mainTable;
-    @FXML
-    private RadioButton appointmentBtn;
     @FXML
     private RadioButton customerBtn;
     @FXML
@@ -50,6 +49,12 @@ public class MainMenuController implements Initializable {
     Parent scene;
     Stage stage;
 
+    /** Moves user to a different page within the application.
+     @param event An ActionEvent.
+     @param resource The file path for the next FXML resource to be loaded.
+     @param width The width of the next scene.
+     @param height The height of the next scene.
+     */
     public void switchScene(ActionEvent event, String resource, int width, int height) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), width, height);
@@ -57,6 +62,11 @@ public class MainMenuController implements Initializable {
         stage.show();
     }
 
+    /** Moves user to a form to add a customer or appointment depending on RadioButton selection.
+     *
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionAdd(ActionEvent event) throws IOException {
         if (customerBtn.isSelected()) {
@@ -66,6 +76,11 @@ public class MainMenuController implements Initializable {
         }
     }
 
+    /**
+     * Moves user to a form to update a customer or appointment depending on RadioButton selection.
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionUpdate(ActionEvent event) throws IOException {
         ObservableList<String> row = (ObservableList<String>) mainTable.getSelectionModel().getSelectedItem();
@@ -89,11 +104,16 @@ public class MainMenuController implements Initializable {
         }
     }
 
+    /**
+     * Allows user to remove a customer or appointment depending on RadioButton selection.
+     * @throws SQLException
+     */
     @FXML
     private void onActionDelete() throws SQLException {
         // Grabs selected item from tableview
         ObservableList<String> row = (ObservableList<String>) mainTable.getSelectionModel().getSelectedItem();
 
+        // If row is null, displays alert
         if (row == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Please select an item to delete");
             alert.setTitle("Main Menu");
@@ -159,18 +179,27 @@ public class MainMenuController implements Initializable {
         }
     }
 
+    /**
+     * Return user to the login screen
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionLogout(ActionEvent event) throws IOException {
         switchScene(event, "/software2/software2/view/login.fxml", 400, 400);
     }
 
-
+    /**
+     * Resets TableColumns in the TableView
+     * @param rs a ResultSet
+     */
     public void resetTableColumns(ResultSet rs) {
+        // clears existing columns and information from the TableView
         mainTable.getColumns().clear();
         mainTable.getItems().clear();
 
         try {
-            //loops over each column in resultSet
+            //loops over each column in resultSet to create new columns for TableView
             for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
                 final int j = i;
                 TableColumn<ObservableList, String> col = new TableColumn<ObservableList, String>(rs.getMetaData().getColumnLabel(i + 1));
@@ -195,6 +224,10 @@ public class MainMenuController implements Initializable {
         }
     }
 
+    /**
+     * Adds and displays new data in the TableView
+     * @param rs a ResultSet
+     */
     public void setMainTable(ResultSet rs) {
         try {
             // create list to be used in tableView
@@ -233,6 +266,7 @@ public class MainMenuController implements Initializable {
             } else {
                 resetTableColumns(rs);
 
+                // Creates an ObservableList from record information
                 while (rs.next()) {
                     int id = rs.getInt("Appointment ID");
                     String title = rs.getString("Title");
@@ -277,7 +311,11 @@ public class MainMenuController implements Initializable {
         }
     }
 
-
+    /**
+     * Resets buttons and TableView to reflect Customer information
+     * @param event an ActionEvent
+     * @throws SQLException
+     */
     @FXML
     private void onCustomerSelect(ActionEvent event) throws SQLException {
         setMainTable(DBCustomersDAO.getResultSet());
@@ -286,6 +324,11 @@ public class MainMenuController implements Initializable {
         UpdateBtn.setText("Update Customer");
     }
 
+    /**
+     * Resets buttons and TableView to reflect Appointment information
+     * @param event an ActionEvent
+     * @throws SQLException
+     */
     @FXML
     private void onApptSelect(ActionEvent event) throws SQLException {
         setMainTable(DBAppointmentsDAO.getResultSet());
@@ -294,6 +337,10 @@ public class MainMenuController implements Initializable {
         UpdateBtn.setText("Update Appointment");
     }
 
+    /**
+     * Filters and displays appointments for the current month.
+     * @param rs a ResultSet
+     */
     public void filterMonth(ResultSet rs) {
         try {
             // create list to be used in tableView
@@ -349,12 +396,16 @@ public class MainMenuController implements Initializable {
         }
     }
 
+    /**
+     * Filters and displays appointments for the current week.
+     * @param rs a ResultSet
+     */
     public void filterWeek(ResultSet rs) {
         try {
             // create list to be used in tableView
             ObservableList<ObservableList> records = FXCollections.observableArrayList();
             LocalDate today = LocalDate.now();
-            int currWeek = today.get(WeekFields.of(helperFunctions.getLocale()).weekOfYear());
+            int currWeek = today.get(WeekFields.of(Locale.getDefault()).weekOfYear());
             int currYear = today.getYear();
 
             resetTableColumns(rs);
@@ -378,7 +429,7 @@ public class MainMenuController implements Initializable {
                 LocalDate endDate = end.toLocalDate();
                 LocalTime endTime = end.toLocalTime();
 
-                int apptWeek = startDate.get(WeekFields.of(helperFunctions.getLocale()).weekOfYear());
+                int apptWeek = startDate.get(WeekFields.of(Locale.getDefault()).weekOfYear());
                 int apptYear = startDate.getYear();
                 if (apptWeek == currWeek && apptYear == currYear) {
 
@@ -408,16 +459,27 @@ public class MainMenuController implements Initializable {
         }
     }
 
+    /**
+     * Filters appointments by Month
+     * @throws SQLException
+     */
     @FXML
     private void onActionMonth() throws SQLException {
         filterMonth(DBAppointmentsDAO.getResultSet());
     }
 
+    /**
+     * Filters appoints by Week
+     * @throws SQLException
+     */
     @FXML
     private void onActionWeek() throws SQLException {
         filterWeek(DBAppointmentsDAO.getResultSet());
     }
 
+    /**
+     * Checks for upcoming appointments and displays alert to user.
+     */
     private void signOnMeetingCheck() {
         LocalDateTime currTime = LocalDateTime.now();
         ObservableList<Appointment> appointments = DBAppointmentsDAO.getAllAppointments();
@@ -427,6 +489,7 @@ public class MainMenuController implements Initializable {
         alert.setTitle("Appointments");
         alert.setHeaderText("Upcoming Appointment");
 
+        // Searches appointments for any appointment within 15 minutes of current time
         for (Appointment appointment: appointments) {
             long timeDiff = ChronoUnit.MINUTES.between(currTime, appointment.getStart()) + 1;
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm");
@@ -450,11 +513,22 @@ public class MainMenuController implements Initializable {
         }
     }
 
+    /**
+     * Moves user to the Reports page.
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionReport(ActionEvent event) throws IOException {
-        switchScene(event, "/software2/software2/view/reports.fxml", 1400, 800);
+        switchScene(event, "/software2/software2/view/reports.fxml", 1400, 700);
     }
 
+    /**
+     * On startup, places information in the TableView and sets next unused ID for both new customers and appointments.
+     * Displays an alert to user notifying them of any upcoming appointments.
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {

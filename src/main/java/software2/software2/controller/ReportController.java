@@ -35,6 +35,10 @@ import java.time.temporal.WeekFields;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+/**
+ * Controls user functions for the Reports menu of the application.
+ * Allows users to view a variety of reports based on selection.
+ */
 public class ReportController implements Initializable {
     @FXML
     private TableView mainTable;
@@ -55,6 +59,10 @@ public class ReportController implements Initializable {
     Parent scene;
     Stage stage;
 
+    /** Moves user to a different page within the application.
+     @param event An ActionEvent.
+     @param resource The file path for the next FXML resource to be loaded.
+     */
     public void switchScene(ActionEvent event, String resource, int width, int height) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), width, height);
@@ -63,17 +71,30 @@ public class ReportController implements Initializable {
     }
 
 
+    /**
+     * Returns user to the Login page
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionLogout(ActionEvent event) throws IOException {
         switchScene(event, "/software2/software2/view/login.fxml", 400, 400);
     }
 
+    /**
+     * Returns user to the Main Menu
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionCancel(ActionEvent event) throws IOException {
-        switchScene(event, "/software2/software2/view/mainmenu.fxml", 1400, 800);
+        switchScene(event, "/software2/software2/view/mainmenu.fxml", 1400, 600);
     }
 
-
+    /**
+     * Resets TableColumns in the TableView
+     * @param rs a ResultSet
+     */
     public void resetTableColumns(ResultSet rs) {
         mainTable.getColumns().clear();
         mainTable.getItems().clear();
@@ -104,6 +125,10 @@ public class ReportController implements Initializable {
         }
     }
 
+    /**
+     * Adds and displays new data in the TableView
+     * @param rs a ResultSet
+     */
     public void setMainTable(ResultSet rs) {
         try {
             // create list to be used in tableView
@@ -210,6 +235,10 @@ public class ReportController implements Initializable {
         }
     }
 
+    /**
+     * Displays report based on selection
+     * @throws SQLException
+     */
     @FXML
     private void onComboSelect() throws SQLException {
         try {
@@ -231,6 +260,9 @@ public class ReportController implements Initializable {
         }
     }
 
+    /**
+     * Changes label and combo box for Contact report
+     */
     @FXML
     private void onContactSelect() {
         itemDropdown.getItems().clear();
@@ -240,6 +272,9 @@ public class ReportController implements Initializable {
         itemDropdown.setItems(DBContactsDAO.getAllContacts());
     }
 
+    /**
+     * Changes label and combo box for Monthly report
+     */
     @FXML
     private void onMonthSelect() {
         itemDropdown.getItems().clear();
@@ -256,6 +291,9 @@ public class ReportController implements Initializable {
         itemDropdown.setItems(monthsList);
     }
 
+    /**
+     * Changes label and combo box for Type report
+     */
     @FXML
     private void onTypeSelect() throws SQLException {
         itemDropdown.getItems().clear();
@@ -265,6 +303,9 @@ public class ReportController implements Initializable {
         itemDropdown.setItems(DBAppointmentsDAO.getApptTypes());
     }
 
+    /**
+     * Changes label and combo box for Country report
+     */
     @FXML
     private void onCountrySelect() throws SQLException {
         itemDropdown.getItems().clear();
@@ -273,16 +314,6 @@ public class ReportController implements Initializable {
         totalLabel.setText("");
         itemDropdown.setItems(DBCountriesDAO.getAllCountries());
     }
-
-
-    @FXML
-    private void onActionWeek() throws SQLException {
-        DatePicker date = new DatePicker();
-        LocalDate meh = LocalDate.now();
-        meh.get(ChronoField.ALIGNED_WEEK_OF_YEAR);
-    }
-
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

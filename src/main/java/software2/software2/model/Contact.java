@@ -1,5 +1,8 @@
 package software2.software2.model;
 
+/**
+ * Class used to create Contact objects throughout the application.
+ */
 public class Contact {
     private int id;
     private String name;
@@ -34,6 +37,7 @@ public class Contact {
     public void setEmail(String email) {
         this.email = email;
     }
+
 
     @Override
     public String toString() {

@@ -1,5 +1,8 @@
 package software2.software2.model;
 
+/**
+ * Class used to create User objects throughout the application.
+ */
 public class User {
     private int id;
     private String username;

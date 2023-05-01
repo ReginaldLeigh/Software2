@@ -10,8 +10,10 @@ import software2.software2.helper.helperFunctions;
 import software2.software2.model.Appointment;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
+/** Creates an application to schedule and organize appointments. */
 public class main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -23,24 +25,9 @@ public class main extends Application {
         stage.show();
     }
 
-    public static void getAppointments() {
-        for (Appointment appointment: DBAppointmentsDAO.getAllAppointments()) {
-            System.out.println(appointment.getContactId());
-            System.out.println(appointment.getId());
-            System.out.println(appointment.getDescription());
-            System.out.println(appointment.getTitle());
-            System.out.println(appointment.getType());
-            System.out.println(appointment.getStart());
-            System.out.println(appointment.getEnd());
-            System.out.println(appointment.getCustomerId());
-            System.out.println(appointment.getUserId());
-            System.out.println("");
-        }
-    }
-
     public static void main(String[] args) {
         JDBC.openConnection();
-        // Locale.setDefault(new Locale("fr"));
+//        Locale.setDefault(new Locale("fr"));
         launch(args);
         JDBC.closeConnection();
 

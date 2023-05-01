@@ -10,6 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Acts as the connection between the database and any information regarding first level divisions
+ */
 public class DBDivisionsDAO {
 
     public static ObservableList<Division> getAllDivisions() {

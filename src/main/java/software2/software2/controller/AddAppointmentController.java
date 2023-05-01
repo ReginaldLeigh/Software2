@@ -25,6 +25,9 @@ import java.net.URL;
 import java.time.*;
 import java.util.ResourceBundle;
 
+/**
+ * Presents form which allows user to add new appointments to system.
+ */
 public class AddAppointmentController implements Initializable {
 
     @FXML
@@ -57,25 +60,42 @@ public class AddAppointmentController implements Initializable {
     Parent scene;
     Stage stage;
 
+    /** Moves user to a different page within the application.
+     @param event An ActionEvent.
+     @param resource The file path for the next FXML resource to be loaded.
+     */
     public void switchScene(ActionEvent event, String resource) throws IOException {
         stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 800);
+        Scene scene = new Scene(FXMLLoader.load(getClass().getResource(resource)), 1400, 600);
         stage.setScene(scene);
         stage.show();
     }
 
+    /**
+     * Returns user to the Main Menu
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionCancel(ActionEvent event) throws IOException {
         switchScene(event, "/software2/software2/view/mainmenu.fxml");
     }
 
+    /**
+     * Creates new Appointment and pushes information into database, LAMBDA USED HERE.
+     * Lambda Expression - utc: Converts user local time to UTC time zone before inserting data into database.
+     * @param event an ActionEvent
+     * @throws IOException
+     */
     @FXML
     private void onActionSave(ActionEvent event) throws IOException {
         Customer customer = customerDropdown.getSelectionModel().getSelectedItem();
         Contact contact = contactDropdown.getSelectionModel().getSelectedItem();
         User user = userDropdown.getSelectionModel().getSelectedItem();
+        // checks for blank fields
         boolean blankCheck = blankCheck();
 
+        // blankCheck returns True is all fields contain data
         if (blankCheck) {
             int apptId = Integer.parseInt(idField.getText());
             String title = titleField.getText();
@@ -112,18 +132,32 @@ public class AddAppointmentController implements Initializable {
         }
     }
 
+    /**
+     * Sets the Appointment ID field
+     */
     public void setIdField() {
         idField.setText(String.valueOf(DBAppointmentsDAO.getNewAppointmentID()));
     }
 
+    /**
+     * Checks all customer appointments for any potential overlap, LAMBDA USED HERE
+     * Lambda Expression - est: Converts user's local time to EST time zone in order to compare all appointments
+     * @param cust_id Customer ID
+     * @param appt_id
+     * @param Astart Start Time
+     * @param Aend End Time
+     * @return Returns boolean
+     */
     private boolean checkOverlap(int cust_id, int appt_id, LocalDateTime Astart, LocalDateTime Aend) {
         boolean overlap = false;
+        // Grabs list of all appointments
         ObservableList<Appointment> appointments = DBAppointmentsDAO.getCustomerAppointments(cust_id);
 
         for (Appointment appointment: appointments) {
             LocalDateTime Bstart = appointment.getStart();
             LocalDateTime Bend = appointment.getEnd();
 
+            // Converts local time to EST
             LocalToEST est = local -> {
                 ZonedDateTime zonedLocal = local.atZone(ZoneId.systemDefault());
                 LocalDateTime timeEst = zonedLocal.withZoneSameInstant(ZoneId.of("America/New_York")).toLocalDateTime();
@@ -135,10 +169,6 @@ public class AddAppointmentController implements Initializable {
             LocalDateTime BstartEST = est.convertToEST(Bstart);
             LocalDateTime BendEST = est.convertToEST(Bend);
 
-//            LocalDateTime AstartEST = helperFunctions.convertToEST(Astart);
-//            LocalDateTime AendEST = helperFunctions.convertToEST(Aend);
-//            LocalDateTime BstartEST = helperFunctions.convertToEST(Bstart);
-//            LocalDateTime BendEST = helperFunctions.convertToEST(Bend);
 
             if ((AstartEST.isAfter(BstartEST) || AstartEST.isEqual(BstartEST)) && (AstartEST.isBefore(BendEST))) {
                 overlap = true;
@@ -158,6 +188,12 @@ public class AddAppointmentController implements Initializable {
         return overlap;
     }
 
+    /**
+     * Compares user entered time to office hours.
+     * @param start Start Time
+     * @param end End Time
+     * @return Returns boolean
+     */
     public boolean checkOfficeHrs(LocalDateTime start, LocalDateTime end) {
         boolean isOpen = true;
         LocalTime openTime = LocalTime.of(8, 0);
@@ -185,6 +221,12 @@ public class AddAppointmentController implements Initializable {
         return isOpen;
     }
 
+    /**
+     * Validates entered Start Time is not before entered End Time
+     * @param start Start Time
+     * @param end End Time
+     * @return Returns boolean
+     */
     public boolean timeCheck(LocalDateTime start, LocalDateTime end) {
         boolean inOrder = true;
         if (start.isAfter(end)) {
@@ -197,6 +239,10 @@ public class AddAppointmentController implements Initializable {
         return inOrder;
     }
 
+    /**
+     * Validates information has been entered in all form fields
+     * @return Returns boolean
+     */
     private boolean blankCheck() {
         String fieldName = "";
 
@@ -234,11 +280,16 @@ public class AddAppointmentController implements Initializable {
     }
 
 
-
+    /**
+     * On startup, prepares all combo boxes on user form
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setIdField();
 
+        // Creates time slots
         LocalTime start = LocalTime.of(0,0);
         LocalTime end = LocalTime.of(23,50);
 

@@ -10,8 +10,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
 
+/**
+ * Acts as the connection between the database and any information regarding countries
+ */
 public class DBCountriesDAO {
 
+    /**
+     * Retrieves all countries from the database
+     * @return a list of all countries
+     */
     public static ObservableList<Country> getAllCountries() {
         //create a list to return
         ObservableList<Country> countries = FXCollections.observableArrayList();

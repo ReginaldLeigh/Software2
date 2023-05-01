@@ -69,7 +69,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <DatePicker fx:id="startDatepicker" />
+                  <DatePicker fx:id="startDatepicker" editable="false" />
                   <ComboBox fx:id="startHours" prefWidth="200.0" />
                </children>
                <padding>
@@ -83,7 +83,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <DatePicker fx:id="endDatepicker" />
+                  <DatePicker fx:id="endDatepicker" editable="false" />
                   <ComboBox fx:id="endHours" prefWidth="200.0" />
                </children>
                <padding>

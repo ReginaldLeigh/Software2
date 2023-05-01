@@ -10,6 +10,8 @@ JavaFX: JavaFX-SDK-17.0.2
 MySQL Connector: mysql-connector-java 8.0.25
 
 Run Instructions: 
+	Locate the "main.java" file with the software2 folder (src\main\java\software2\software2\main.java) and run application.
+	
 
 Additional Report:
 	The report I added gives uses the ability to view customer by their registered countries. This report can be found by logging in, selecting "Reports", 

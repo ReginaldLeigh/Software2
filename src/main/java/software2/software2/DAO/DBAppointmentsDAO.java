@@ -8,6 +8,9 @@ import software2.software2.model.Appointment;
 import java.sql.*;
 import java.time.LocalDateTime;
 
+/**
+ * Acts as the connection between the database and any information regarding appointments
+ */
 public class DBAppointmentsDAO {
     private static int newAppointmentID = 0;
 
@@ -34,6 +37,10 @@ public class DBAppointmentsDAO {
         }
     }
 
+    /**
+     * Retrieves all appointments from the database
+     * @return a list of appointments
+     */
     public static ObservableList<Appointment> getAllAppointments() {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -78,6 +85,10 @@ public class DBAppointmentsDAO {
         return appointments;
     }
 
+    /**
+     * Inserts a new appointment into the database
+     * @param appointment the Appointment to be added
+     */
     public static void addAppointment(Appointment appointment) {
 
         //set up the sql
@@ -110,6 +121,10 @@ public class DBAppointmentsDAO {
         }
     }
 
+    /**
+     * Updates an appointment within the database
+     * @param appointment the Appointment to be updated
+     */
     public static void updateAppointment(Appointment appointment) {
 
         //set up the sql
@@ -139,6 +154,10 @@ public class DBAppointmentsDAO {
         }
     }
 
+    /**
+     * Removes an appointment from the database
+     * @param appointment the Appointment to be deleted
+     */
     public static void deleteAppointment(Appointment appointment) {
 
         //set up the sql
@@ -159,6 +178,11 @@ public class DBAppointmentsDAO {
         }
     }
 
+    /**
+     * Retrieves a ResultsSet consisting of all appointments
+     * @return a ResultSet
+     * @throws SQLException
+     */
     public static ResultSet getResultSet() throws SQLException {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -221,6 +245,11 @@ public class DBAppointmentsDAO {
         return null;
     }
 
+    /**
+     * Returns a list of all appointments associated with a customer
+     * @param customer_id the customer ID
+     * @return a list of associated appointments
+     */
     public static ObservableList<Appointment> getCustomerAppointments(int customer_id) {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -265,6 +294,12 @@ public class DBAppointmentsDAO {
         return appointments;
     }
 
+    /**
+     * Returns a ResultSet consisting of all appointments of a certain type
+     * @param type the appointment type
+     * @return a ResultSet
+     * @throws SQLException
+     */
     public static ResultSet getApptByType(String type) throws SQLException {
         //create a list to return
         ObservableList<Appointment> appointments = FXCollections.observableArrayList();
@@ -292,6 +327,11 @@ public class DBAppointmentsDAO {
         return ps.executeQuery();
     }
 
+    /**
+     * Returns a list of all appointment types
+     * @return a list of appointment types
+     * @throws SQLException
+     */
     public static ObservableList<String> getApptTypes() throws SQLException {
         ObservableList<String> apptTypes = FXCollections.observableArrayList();
 
@@ -313,6 +353,12 @@ public class DBAppointmentsDAO {
         return apptTypes;
     }
 
+    /**
+     * Returns a ResultSet of all appointment associated with a contact
+     * @param contactId the contact ID
+     * @return a ResultSet
+     * @throws SQLException
+     */
     public static ResultSet getApptByContact(int contactId) throws SQLException {
         //set up the sql
         String sql = "SELECT a.Appointment_ID as 'Appointment ID', " +

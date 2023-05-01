@@ -17,6 +17,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Acts as the connection between the database and any information regarding customers
+ */
 public class DBCustomersDAO {
     private static int newCustomerID = 0;
 
@@ -43,6 +46,10 @@ public class DBCustomersDAO {
         }
     }
 
+    /**
+     * Retrieves all customers from the database
+     * @return a list of all customers
+     */
     public static ObservableList<Customer> getAllCustomers() {
         //create a list to return
         ObservableList<Customer> customers = FXCollections.observableArrayList();
@@ -84,6 +91,11 @@ public class DBCustomersDAO {
         return customers;
     }
 
+    /**
+     * Retrieves a customer from the database
+     * @param customer_id a customer's ID
+     * @return Returns a customer
+     */
     public static Customer getCustomer(int customer_id) {
         //set up the sql
         String sql = "SELECT a.*, b.country_id FROM client_schedule.customers a " +
@@ -124,6 +136,10 @@ public class DBCustomersDAO {
         return null;
     }
 
+    /**
+     * Adds a new customer to the database
+     * @param customer the customer to be added
+     */
     public static void addCustomer(Customer customer) {
 
         //set up the sql
@@ -151,6 +167,10 @@ public class DBCustomersDAO {
         }
     }
 
+    /**
+     * Updates an existing customer in the database
+     * @param customer The customer to be updated
+     */
     public static void updateCustomer(Customer customer) {
 
         //set up the sql
@@ -176,6 +196,10 @@ public class DBCustomersDAO {
         }
     }
 
+    /**
+     * Removes a customer from the database
+     * @param customer The customer to be removed
+     */
     public static void deleteCustomer(Customer customer) {
 
         //set up the sql
@@ -196,6 +220,11 @@ public class DBCustomersDAO {
         }
     }
 
+    /**
+     * Returns a list of all appointments associated with a customer
+     * @param customer A customer
+     * @return Returns a list of appointments
+     */
     public static ObservableList<Appointment> searchAssociatedAppts(Customer customer) {
         ObservableList<Appointment> appointments = DBAppointmentsDAO.getAllAppointments();
         ObservableList<Appointment> associatedAppts = FXCollections.observableArrayList();
@@ -209,6 +238,11 @@ public class DBCustomersDAO {
         return associatedAppts;
     }
 
+    /**
+     * Retrieves a ResultSet consisting of all current customers
+     * @return Returns a ResultSet
+     * @throws SQLException
+     */
     public static ResultSet getResultSet() throws SQLException {
         //set up the sql
         String sql = "SELECT a.customer_id as 'Customer ID', " +
@@ -233,6 +267,12 @@ public class DBCustomersDAO {
         return rs;
     }
 
+    /**
+     * Retrieves a ResultSet of all customers by country
+     * @param country_id A country ID
+     * @return Returns a ResultSet
+     * @throws SQLException
+     */
     public static ResultSet getCustByCountry(int country_id) throws SQLException {
         //set up the sql
         String sql = "SELECT a.customer_id as 'Customer ID', " +

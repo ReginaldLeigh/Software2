@@ -11,6 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Acts as the connection between the database and any information regarding users
+ */
 public class DBUsersDAO {
     private static User currentUser;
     public static ObservableList<User> getAllUsers() {
@@ -80,7 +83,5 @@ public class DBUsersDAO {
         return null;
     }
 
-    // returns User of current session
-    public static User getCurrentUser() { return currentUser; }
     public static void setCurrentUser(User user) { currentUser = user; }
 }
