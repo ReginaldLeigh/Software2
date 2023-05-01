@@ -97,6 +97,11 @@ public class UpdateCustomerController implements Initializable {
             int divisionID = division.getDivisionID();
             int countryID = country.getCountryID();
 
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Successfully added customer!");
+            alert.setHeaderText("Success");
+            alert.setTitle("Customers");
+            alert.showAndWait();
+
             DBCustomersDAO.updateCustomer(new Customer(id, name, address, postalCode, phone, divisionID, countryID));
             switchScene(event, "/software2/software2/view/mainmenu.fxml");
         }
