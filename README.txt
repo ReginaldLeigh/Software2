@@ -12,8 +12,3 @@ MySQL Connector: mysql-connector-java-8.0.26
 Run Instructions: 
 	Locate the "main.java" file with the software2 folder (src\main\java\software2\software2\main.java) and launch the application.
 	You may user the word "test" as both a username and password in order to gain access to the main menu.
-	
-
-Additional Report:
-	The report I added gives uses the ability to view customers by their registered countries. This report can be found by logging in, selecting "Reports", 
-	selecting "Total Customer by Country", and choosing a country in the combo box below. 
