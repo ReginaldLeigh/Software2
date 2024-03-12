@@ -1,7 +1,7 @@
 Title: Appointment Management System
 Purpose: To assist in scheduling and organizing appointments of various customers
 Author: Reginald Leigh
-Contact Info: rleigh@wgu.edu
+Contact Info: reggie.leigh@gmail.com
 Ver: 1.0
 Date: April 30, 2023
 IDE: IntelliJ IDEA 2022.3 (Community Edition)
